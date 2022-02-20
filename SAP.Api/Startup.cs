@@ -13,7 +13,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SAP.Data;
+using SAP.Domain;
 using SAP.Domain.ConfigSettings;
+using SAP.Domain.Dtos;
 using SAP.Domain.Entities;
 using SAP.Domain.Services;
 using SAP.Services;
@@ -140,7 +142,10 @@ namespace SAP.Api
             });
 
             //Services
+            services.AddScoped<IDbContext>(s => s.GetService<SapDbContext>());
             services.AddScoped<IIdentityService, IdentityService>();
+            services.AddScoped<IRequestContext, RequestContext>();
+            services.AddScoped<IProjectService, ProjectService>();
 
             //Config Settings
             services.Configure<JwtSettings>(Configuration.GetSection("JwtSettings"));

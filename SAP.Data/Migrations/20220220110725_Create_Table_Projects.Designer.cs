@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SAP.Data;
 
 namespace SAP.Data.Migrations
 {
     [DbContext(typeof(SapDbContext))]
-    partial class SapDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220220110725_Create_Table_Projects")]
+    partial class Create_Table_Projects
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
