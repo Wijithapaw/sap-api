@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using SAP.Domain;
 using SAP.Domain.Dtos;
 using SAP.Domain.Entities;
@@ -33,6 +34,17 @@ namespace SAP.Data
             builder.Entity<IdentityRoleClaim<string>>().ToTable("RoleClaims");
             builder.Entity<IdentityUserLogin<string>>().ToTable("UserLogins");
             builder.Entity<IdentityUserToken<string>>().ToTable("UserTokens");
+
+            var keysProperties = builder.Model.GetEntityTypes()
+               .Select(e => e.FindPrimaryKey())
+               .Where(key => key != null)
+               .SelectMany(x => x.Properties)
+               .ToList();
+
+            foreach (var property in keysProperties)
+            {
+                property.ValueGenerated = ValueGenerated.OnAdd;
+            }
         }
 
         public DbSet<Project> Projects { get; set; }

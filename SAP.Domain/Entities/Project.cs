@@ -9,11 +9,11 @@ namespace SAP.Domain.Entities
 {
     public class Project : AuditedEntity
     {
-        public string Id { get; set; } = string.Empty;
+        public string Id { get; set; }
         [Required]
         [MinLength(3)]
         [MaxLength(50)]
-        public string Title { get; set; } = string.Empty;
+        public string Title { get; set; }
         [MaxLength(500)]
         public string Description { get; set; }
         public DateTime? StartDate { get; set; }

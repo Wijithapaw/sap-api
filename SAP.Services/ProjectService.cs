@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SAP.Domain;
 using SAP.Domain.Dtos;
+using SAP.Domain.Entities;
 using SAP.Domain.Enums;
 using SAP.Domain.Services;
 using System;
@@ -20,19 +21,48 @@ namespace SAP.Services
             _dbContext = dbContext;
         }
 
-        public Task<string> CreateAsync(ProjectDto project)
+        public async Task<string> CreateAsync(ProjectDto dto)
         {
-            throw new NotImplementedException();
+            var newProject = new Project
+            {
+                Title = dto.Title,
+                Description = dto.Description,
+                State = dto.State,
+                StartDate = dto.StartDate,
+                EndDate = dto.EndDate
+            };
+
+            _dbContext.Projects.Add(newProject);
+
+            await _dbContext.SaveChangesAsync();
+
+            return newProject.Id;
         }
 
-        public Task DeleteAsync(string id)
+        public async Task DeleteAsync(string id)
         {
-            throw new NotImplementedException();
+            var project = await _dbContext.Projects.FindAsync(id);
+
+            _dbContext.Projects.Remove(project);
+
+            await _dbContext.SaveChangesAsync();
         }
 
-        public Task<ProjectDto> GetAsync(string id)
+        public async Task<ProjectDto> GetAsync(string id)
         {
-            throw new NotImplementedException();
+            var project = await _dbContext.Projects
+                    .Where(p => p.Id == id)
+                    .Select(p => new ProjectDto
+                    {
+                        Id = p.Id,
+                        Title = p.Title,
+                        Description = p.Description,
+                        State = p.State,
+                        StartDate = p.StartDate,
+                        EndDate = p.EndDate
+                    }).FirstOrDefaultAsync();
+
+            return project;
         }
 
         public async Task<List<ProjectDto>> SearchAsync(string searchTerm = null, bool activeOnly = false)
@@ -59,9 +89,20 @@ namespace SAP.Services
             return projects;
         }
 
-        public Task UpdateAsync(string id, ProjectDto project)
+        public async Task UpdateAsync(string id, ProjectDto dto)
         {
-            throw new NotImplementedException();
+            var project = await _dbContext.Projects.FindAsync(id);
+
+            if (project == null)
+                throw new ApplicationException("ERR_RECORD_NOT_FOUND");
+
+            project.Title = dto.Title;
+            project.Description = dto.Description;
+            project.StartDate = dto.StartDate;
+            project.EndDate = dto.EndDate;
+            project.State = dto.State;
+
+            await _dbContext.SaveChangesAsync();
         }
     }
 }
