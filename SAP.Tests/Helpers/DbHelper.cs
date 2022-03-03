@@ -14,7 +14,7 @@ namespace SAP.Tests.Helpers
     {
         private static SqliteConnection GetSqliteConnection()
         {
-            var connection = new SqliteConnection("Data Source=TenantDb;Mode=Memory;");
+            var connection = new SqliteConnection("DataSource=:memory:");
             connection.Open();
 
             return connection;

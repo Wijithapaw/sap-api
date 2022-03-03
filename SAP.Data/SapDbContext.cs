@@ -45,9 +45,16 @@ namespace SAP.Data
             {
                 property.ValueGenerated = ValueGenerated.OnAdd;
             }
+
+            //Indexes
+            builder.Entity<LookupHeader>().HasIndex(e => e.Code).IsUnique();
+            builder.Entity<Lookup>().HasIndex(e => new { e.HeaderId, e.Code }).IsUnique();
         }
 
+        //Entities
         public DbSet<Project> Projects { get; set; }
+        public DbSet<LookupHeader> LookupHeaders { get; set; }
+        public DbSet<Lookup> Lookups { get; set; }
 
         public override int SaveChanges()
         {

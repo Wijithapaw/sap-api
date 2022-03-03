@@ -8,7 +8,7 @@ namespace SAP.Tests.Helpers
 {
     internal static class DtoHelper
     {
-        internal static ProjectDto CreateProjectDto(string id,
+        internal static ProjectDto GetProjectDto(string id,
             string title,
             string desc,
             DateTime? sDate,
@@ -25,6 +25,20 @@ namespace SAP.Tests.Helpers
                 State = state
             };
             return project;
+        }
+
+        internal static LookupDto GetLookupDto(string id, string headerId, string code, string name, bool inactive = false)
+        {
+            var lookup = new LookupDto
+            {
+                Id = id,
+                HeaderId = headerId,
+                Code = code,
+                Name = name,
+                Inactive = inactive
+            };
+
+            return lookup;
         }
     }
 }

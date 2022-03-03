@@ -26,5 +26,29 @@ namespace SAP.Tests.Helpers
             };
             return project;
         }
+
+        internal static LookupHeader CreateLookupHeader(string id, string code, string name)
+        {
+            var lookupHeader = new LookupHeader
+            {
+                Id = id,
+                Code = code,
+                Name = name
+            };
+            return lookupHeader;
+        }
+
+        internal static Lookup CreateLookup(string id, string headerId, string code, string name, bool inactive = false)
+        {
+            var lookup = new Lookup
+            {
+                Id = id,
+                HeaderId = headerId,
+                Code = code,
+                Name = name,
+                Inactive = inactive
+            };
+            return lookup;
+        }
     }
 }

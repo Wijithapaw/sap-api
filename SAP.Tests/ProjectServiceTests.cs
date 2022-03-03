@@ -145,7 +145,7 @@ namespace SAP.Tests
                    {
                        var service = CreateService(dbContext);
 
-                       var project = DtoHelper.CreateProjectDto(null, title, desc, sDate, eDate, state);
+                       var project = DtoHelper.GetProjectDto(null, title, desc, sDate, eDate, state);
 
                        projectId = await service.CreateAsync(project);
                    },
@@ -177,7 +177,7 @@ namespace SAP.Tests
                    {
                        var service = CreateService(dbContext);
 
-                       var project = DtoHelper.CreateProjectDto(null, "Wire Fence - Updated", "Desc Updated", new DateTime(2022, 1, 1), new DateTime(2022, 1, 31), ProjectState.Pending);
+                       var project = DtoHelper.GetProjectDto(null, "Wire Fence - Updated", "Desc Updated", new DateTime(2022, 1, 1), new DateTime(2022, 1, 31), ProjectState.Pending);
 
                        await service.UpdateAsync("p-1", project);
                    },
@@ -206,7 +206,7 @@ namespace SAP.Tests
                    {
                        var service = CreateService(dbContext);
 
-                       var project = DtoHelper.CreateProjectDto(null, "Wire Fence - Updated", "Desc Updated", new DateTime(2022, 1, 1), new DateTime(2022, 1, 31), ProjectState.Pending);
+                       var project = DtoHelper.GetProjectDto(null, "Wire Fence - Updated", "Desc Updated", new DateTime(2022, 1, 1), new DateTime(2022, 1, 31), ProjectState.Pending);
 
                        await Assert.ThrowsAsync<ApplicationException>(() => service.UpdateAsync("p-invalid", project));
                    });
