@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using SAP.Api.Authorization;
 using SAP.Data;
 using SAP.Domain;
 using SAP.Domain.ConfigSettings;
@@ -141,11 +142,15 @@ namespace SAP.Api
                 };
             });
 
+            //------------Customer authorization policy provider-------------//
+            services.AddSingleton<IAuthorizationPolicyProvider, CustomAuthorizationPolicyProvider>();
+
             //Services
             services.AddScoped<IDbContext>(s => s.GetService<SapDbContext>());
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<IRequestContext, RequestContext>();
             services.AddScoped<IProjectService, ProjectService>();
+            services.AddScoped<ILookupService, LookupService>();
 
             //Config Settings
             services.Configure<JwtSettings>(Configuration.GetSection("JwtSettings"));

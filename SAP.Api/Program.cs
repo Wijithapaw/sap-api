@@ -6,10 +6,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SAP.Data;
+using SAP.Domain.Constants;
 using SAP.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace SAP.Api
@@ -40,16 +42,14 @@ namespace SAP.Api
                 var userManager = scope.ServiceProvider.GetService<UserManager<User>>();
                 var roleManager = scope.ServiceProvider.GetService<RoleManager<Role>>();
 
-                dbContext.Database.EnsureDeleted();
+                //TODO remove this after initial pharse of development
+                //dbContext.Database.EnsureDeleted();
 
                 await dbContext.Database.MigrateAsync();
 
                 if(!dbContext.Users.Any())
                 {
-                    var adminRole = new Role { Name = "Admin" };
-                    var accountantRole = new Role { Name = "Accountant" };
-                    var analyzerRole = new Role { Name = "Analyzer" };
-
+                    //Create admin user
                     var admin = new User
                     {
                         Email = "wijithapaw@gmail.com",                        
@@ -57,13 +57,30 @@ namespace SAP.Api
                         SecurityStamp = Guid.NewGuid().ToString(),
                         EmailConfirmed = true,
                     };
-
+                   
                     await userManager.CreateAsync(admin, "User@123");
 
+                    //Create Roles
+                    var adminRole = new Role { Id = "role-admin", Name = "Admin" };
+                    var pmRole = new Role { Id = "role-project-manager", Name = "ProjectManager" };
+                    var analyzerRole = new Role { Id = "role-data-analyzer", Name = "DataAnalyzer" };
+
                     await roleManager.CreateAsync(adminRole);
-                    await roleManager.CreateAsync(accountantRole);
+                    await roleManager.CreateAsync(pmRole);
                     await roleManager.CreateAsync(analyzerRole);
 
+                    //Add basic claims to roles
+                    await roleManager.AddClaimAsync(adminRole, new Claim(CustomsClaimTypes.SapPermission, CustomClaims.FinancialReports));
+                    await roleManager.AddClaimAsync(adminRole, new Claim(CustomsClaimTypes.SapPermission, CustomClaims.LookupsManage));
+                    await roleManager.AddClaimAsync(adminRole, new Claim(CustomsClaimTypes.SapPermission, CustomClaims.ProjectsAllAccess));
+                    await roleManager.AddClaimAsync(adminRole, new Claim(CustomsClaimTypes.SapPermission, CustomClaims.TransactionEntry));
+
+                    await roleManager.AddClaimAsync(pmRole, new Claim(CustomsClaimTypes.SapPermission, CustomClaims.FinancialReports));
+                    await roleManager.AddClaimAsync(pmRole, new Claim(CustomsClaimTypes.SapPermission, CustomClaims.TransactionEntry));
+
+                    await roleManager.AddClaimAsync(analyzerRole, new Claim(CustomsClaimTypes.SapPermission, CustomClaims.FinancialReports));
+
+                    //Add Admin role to admin user
                     await userManager.AddToRoleAsync(admin, "Admin");
                 }
             }
