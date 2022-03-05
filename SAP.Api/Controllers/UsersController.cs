@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using SAP.Api.Authorization;
 using SAP.Domain.Constants;
 using SAP.Domain.Dtos;
 using SAP.Domain.Services;
@@ -31,6 +32,7 @@ namespace SAP.Api.Controllers
         }
 
         [HttpGet("projectmanagers")]
+        [ClaimAuthorize(CustomClaims.ProjectsAllAccess)]
         public async Task<List<ListItemDto>> GetProjectManagers()
         {
             return await _userService.GetUsersListItemsByRoleAsync(IdentityRoles.ProjectManager);

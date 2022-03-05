@@ -13,5 +13,7 @@ namespace SAP.Domain.Dtos
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public ProjectState State { get; set; }
+        public string ProjectManagerId { get; set; }
+        public string ProjectManager { get; set; }
     }
 }

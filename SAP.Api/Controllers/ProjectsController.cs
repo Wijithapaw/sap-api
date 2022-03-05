@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SAP.Api.Authorization;
+using SAP.Domain.Constants;
 using SAP.Domain.Dtos;
 using SAP.Domain.Services;
 using System.Collections.Generic;
@@ -18,6 +20,7 @@ namespace SAP.Api.Controllers
         }
 
         [HttpGet]
+        [ClaimAuthorize(CustomClaims.ProjectsAllAccess)]
         public async Task<List<ProjectDto>> Get(string searchTerm, bool activeOnly)
         {
             return await _projectService.SearchAsync(searchTerm, activeOnly);
@@ -30,24 +33,28 @@ namespace SAP.Api.Controllers
         }
 
         [HttpGet("{id}")]
+        [ClaimAuthorize(CustomClaims.ProjectsAllAccess)]
         public async Task<ProjectDto> Get(string id)
         {
             return await _projectService.GetAsync(id);
         }
 
         [HttpPost]
+        [ClaimAuthorize(CustomClaims.ProjectsAllAccess)]
         public async Task<string> PostAsync([FromBody] ProjectDto value)
         {
             return await _projectService.CreateAsync(value);
         }
 
         [HttpPut("{id}")]
+        [ClaimAuthorize(CustomClaims.ProjectsAllAccess)]
         public async void Put(string id, [FromBody] ProjectDto value)
         {
             await _projectService.UpdateAsync(id, value);
         }
 
         [HttpDelete("{id}")]
+        [ClaimAuthorize(CustomClaims.ProjectsAllAccess)]
         public async void Delete(string id)
         {
             await _projectService.DeleteAsync(id);

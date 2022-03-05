@@ -29,7 +29,8 @@ namespace SAP.Services
                 Description = dto.Description,
                 State = dto.State,
                 StartDate = dto.StartDate,
-                EndDate = dto.EndDate
+                EndDate = dto.EndDate,
+                ProjectManagerId = dto.ProjectManagerId
             };
 
             _dbContext.Projects.Add(newProject);
@@ -59,7 +60,9 @@ namespace SAP.Services
                         Description = p.Description,
                         State = p.State,
                         StartDate = p.StartDate,
-                        EndDate = p.EndDate
+                        EndDate = p.EndDate,
+                        ProjectManagerId = p.ProjectManagerId,
+                        ProjectManager = $"{p.ProjectManager.FirstName} {p.ProjectManager.LastName}"
                     }).FirstOrDefaultAsync();
 
             return project;
@@ -75,7 +78,8 @@ namespace SAP.Services
                     Description = p.Description,
                     StartDate = p.StartDate,
                     EndDate = p.EndDate,
-                    State = p.State
+                    State = p.State,
+                    ProjectManager = $"{p.ProjectManager.FirstName} {p.ProjectManager.LastName}"
                 }).ToListAsync();
 
             return projects;
@@ -106,6 +110,7 @@ namespace SAP.Services
             project.StartDate = dto.StartDate;
             project.EndDate = dto.EndDate;
             project.State = dto.State;
+            project.ProjectManagerId = dto.ProjectManagerId;
 
             await _dbContext.SaveChangesAsync();
         }

@@ -13,7 +13,8 @@ namespace SAP.Tests.Helpers
             string desc,
             DateTime? sDate,
             DateTime? eDate,
-            ProjectState state)
+            ProjectState state,
+            string projectManagerId = null)
         {
             var project = new ProjectDto
             {
@@ -22,7 +23,8 @@ namespace SAP.Tests.Helpers
                 Description = desc,
                 StartDate = sDate,
                 EndDate = eDate,
-                State = state
+                State = state,
+                ProjectManagerId = projectManagerId
             };
             return project;
         }

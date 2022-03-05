@@ -8,12 +8,13 @@ namespace SAP.Tests.Helpers
 {
     internal static class EntityHelper
     {
-        internal static Project CreateProject(string id, 
+        internal static Project GetProject(string id, 
             string title, 
             string desc, 
             DateTime? sDate, 
             DateTime? eDate, 
-            ProjectState state)
+            ProjectState state,
+            string projectManagerId = null)
         {
             var project = new Project
             {
@@ -22,12 +23,13 @@ namespace SAP.Tests.Helpers
                 Description = desc,
                 StartDate = sDate,
                 EndDate = eDate,
-                State = state
+                State = state,
+                ProjectManagerId = projectManagerId
             };
             return project;
         }
 
-        internal static LookupHeader CreateLookupHeader(string id, string code, string name)
+        internal static LookupHeader GetLookupHeader(string id, string code, string name)
         {
             var lookupHeader = new LookupHeader
             {
@@ -38,7 +40,11 @@ namespace SAP.Tests.Helpers
             return lookupHeader;
         }
 
-        internal static Lookup CreateLookup(string id, string headerId, string code, string name, bool inactive = false)
+        internal static Lookup GetLookup(string id, 
+            string headerId, 
+            string code, 
+            string name, 
+            bool inactive = false)
         {
             var lookup = new Lookup
             {
@@ -49,6 +55,22 @@ namespace SAP.Tests.Helpers
                 Inactive = inactive
             };
             return lookup;
+        }
+
+        internal static User GetUser(string id, string fName, string lName, string email)
+        {
+            var user = new User
+            {
+                Id = id,
+                FirstName = fName,
+                LastName = lName,
+                Email = email,
+                UserName = email,
+                NormalizedEmail = email.ToUpper(),
+                NormalizedUserName = email.ToUpper(),
+            };
+
+            return user;
         }
     }
 }

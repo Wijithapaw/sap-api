@@ -19,5 +19,8 @@ namespace SAP.Domain.Entities
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public ProjectState State { get; set; }
+        public string ProjectManagerId { get; set; }
+
+        public virtual User ProjectManager { get; set; }
     }
 }

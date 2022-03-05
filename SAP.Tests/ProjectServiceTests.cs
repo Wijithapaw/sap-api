@@ -15,8 +15,8 @@ namespace SAP.Tests
         public class Search
         {
             [Theory]
-            [InlineData(null, false, 3)]
-            [InlineData(null, true, 1)]
+            [InlineData(null, false, 4)]
+            [InlineData(null, true, 2)]
             [InlineData("BRIDGE", false, 1)]
             [InlineData("infra", false, 2)]
             public async Task WhenProjectsAvailable_ReturnAsPerFilter(string searchTerm, bool activeOnly, int expectedCount)
@@ -58,6 +58,8 @@ namespace SAP.Tests
                        Assert.Equal(ProjectState.Completed, project.State);
                        Assert.Equal(new DateTime(2020, 4, 1), project.StartDate);
                        Assert.Equal(new DateTime(2020, 6, 1), project.EndDate);
+                       Assert.Equal("u-1", project.ProjectManagerId);
+                       Assert.Equal("Wijitha Wijenayake", project.ProjectManager);
                    });
             }
 
@@ -125,14 +127,14 @@ namespace SAP.Tests
         {
             public static List<object[]> TestData => new List<object[]>
             {
-                new object[] { "Cottage", "Family Cottage", new DateTime(2022, 5, 1), null, ProjectState.Pending },
-                new object[] { "Bridge", "Family Cottage", new DateTime(2021, 5, 1), new DateTime(2021, 5, 30), ProjectState.Pending },
-                new object[] { "Bridge", "Papaw", null, null, ProjectState.Inprogress }
+                new object[] { "Cottage", "Family Cottage", new DateTime(2022, 5, 1), null, ProjectState.Pending, "u-2" },
+                new object[] { "Bridge", "Family Cottage", new DateTime(2021, 5, 1), new DateTime(2021, 5, 30), ProjectState.Pending, "u-3" },
+                new object[] { "Bridge", "Papaw", null, null, ProjectState.Inprogress, null }
             };
 
             [Theory]
             [MemberData(nameof(TestData))]
-            public async Task WhenPassingValidData_CreatedSuccessfully(string title, string desc, DateTime? sDate, DateTime? eDate, ProjectState state)
+            public async Task WhenPassingValidData_CreatedSuccessfully(string title, string desc, DateTime? sDate, DateTime? eDate, ProjectState state, string pmId)
             {
                 string projectId = null;
 
@@ -145,7 +147,7 @@ namespace SAP.Tests
                    {
                        var service = CreateService(dbContext);
 
-                       var project = DtoHelper.GetProjectDto(null, title, desc, sDate, eDate, state);
+                       var project = DtoHelper.GetProjectDto(null, title, desc, sDate, eDate, state, pmId);
 
                        projectId = await service.CreateAsync(project);
                    },
@@ -159,6 +161,7 @@ namespace SAP.Tests
                        Assert.Equal(sDate, project.StartDate);
                        Assert.Equal(eDate, project.EndDate);
                        Assert.Equal(state, project.State);
+                       Assert.Equal(pmId, project.ProjectManagerId);
                    });
             }
         }
@@ -177,7 +180,7 @@ namespace SAP.Tests
                    {
                        var service = CreateService(dbContext);
 
-                       var project = DtoHelper.GetProjectDto(null, "Wire Fence - Updated", "Desc Updated", new DateTime(2022, 1, 1), new DateTime(2022, 1, 31), ProjectState.Pending);
+                       var project = DtoHelper.GetProjectDto(null, "Wire Fence - Updated", "Desc Updated", new DateTime(2022, 1, 1), new DateTime(2022, 1, 31), ProjectState.Pending, "u-3");
 
                        await service.UpdateAsync("p-1", project);
                    },
@@ -191,6 +194,7 @@ namespace SAP.Tests
                        Assert.Equal(new DateTime(2022, 1, 1), project.StartDate);
                        Assert.Equal(new DateTime(2022, 1, 31), project.EndDate);
                        Assert.Equal(ProjectState.Pending, project.State);
+                       Assert.Equal("u-3", project.ProjectManagerId);
                    });
             }
 
@@ -216,6 +220,7 @@ namespace SAP.Tests
 
         private static async Task SetupTestDataAsync(IDbContext dbContext)
         {
+            dbContext.Users.AddRange(TestData.Users.GetUsers());
             dbContext.Projects.AddRange(TestData.Projects.GetProjects());
 
             await dbContext.SaveChangesAsync();
