@@ -11,6 +11,7 @@ namespace SAP.Domain.Services
         Task<string> CreateAsync(ProjectDto project);
         Task DeleteAsync(string id);
         Task<List<ProjectDto>> SearchAsync(string searchTerm = null, bool activeOnly = false);
+        Task<List<ListItemDto>> GetProjectsListItemsAsync(string searchTerm = null);
         Task<ProjectDto> GetAsync(string id);
         Task UpdateAsync(string id, ProjectDto project);
     }

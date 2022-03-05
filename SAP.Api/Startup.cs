@@ -147,7 +147,7 @@ namespace SAP.Api
 
             //Services
             services.AddScoped<IDbContext>(s => s.GetService<SapDbContext>());
-            services.AddScoped<IIdentityService, IdentityService>();
+            services.AddScoped<IUserService, UserService>();
             services.AddScoped<IRequestContext, RequestContext>();
             services.AddScoped<IProjectService, ProjectService>();
             services.AddScoped<ILookupService, LookupService>();

@@ -8,19 +8,20 @@ using SAP.Domain.Services;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace SAP.Services
 {
-    public class IdentityService : IIdentityService
+    public class UserService : IUserService
     {
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<Role> _roleManager;
         private readonly JwtSettings _jwtSettings;
 
-        public IdentityService(UserManager<User> userManager, 
+        public UserService(UserManager<User> userManager, 
             RoleManager<Role> roleManager,
             IOptions<JwtSettings> jwtSettings) 
         {
@@ -55,6 +56,17 @@ namespace SAP.Services
                 Succeeded = false,
                 ErrorCode = "ERR_INVALID_LOGIN_ATTEMPT"
             };
+        }
+
+        public async Task<List<ListItemDto>> GetUsersListItemsByRoleAsync(string roleName)
+        {
+            var users = await _userManager.GetUsersInRoleAsync(roleName);
+
+            var listItems = users
+                .Select(u => new ListItemDto(u.Id, $"{u.FirstName} {u.LastName} | {u.Email}"))
+                .ToList();
+
+            return listItems;
         }
 
         private async Task<string> CreateJwtTokenAsync(User user)

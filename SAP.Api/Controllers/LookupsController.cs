@@ -22,7 +22,7 @@ namespace SAP.Api.Controllers
 
         [HttpGet("allheaders")]
         [ClaimAuthorize(CustomClaims.LookupsManage)]
-        public async Task<List<KeyValuePair<string, string>>> GetAllHeaders()
+        public async Task<List<ListItemDto>> GetAllHeaders()
         {
             return await _lookupService.GetAllLookupHeadersAsync();
         }
@@ -34,8 +34,8 @@ namespace SAP.Api.Controllers
             return await _lookupService.GetByHeaderIdAsync(headerId);
         }
 
-        [HttpGet("/active/listitems/{headercode}")]
-        public async Task<List<KeyValuePair<string, string>>> GetListItemsByHeader(string headerCode)
+        [HttpGet("active/listitems/{headercode}")]
+        public async Task<List<ListItemDto>> GetListItemsByHeader(string headerCode)
         {
             return await _lookupService.GetActiveLookupsAsListItemseAsync(headerCode);
         }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using SAP.Domain.Constants;
 using SAP.Domain.Dtos;
 using SAP.Domain.Services;
 using System;
@@ -14,25 +15,25 @@ namespace SAP.Api.Controllers
     [Route("api/[controller]")]
     public class UsersController : ControllerBase
     {
-        private readonly IIdentityService _identityService;
+        private readonly IUserService _userService;
 
-        public UsersController(IIdentityService identityService)
+        public UsersController(IUserService userService)
         {
-            _identityService = identityService;
+            _userService = userService;
         }
 
         [AllowAnonymous]
-        [HttpPost("Login")]
+        [HttpPost("login")]
         public async Task<LoginResultDto> Login(LoginRequestDto loginRequest)
         {
-            var result = await _identityService.LoginAsync(loginRequest);
+            var result = await _userService.LoginAsync(loginRequest);
             return result;
         }
 
-        [HttpGet("{id}")]
-        public string Get(string id)
+        [HttpGet("projectmanagers")]
+        public async Task<List<ListItemDto>> GetProjectManagers()
         {
-            return id;
+            return await _userService.GetUsersListItemsByRoleAsync(IdentityRoles.ProjectManager);
         }
     }
 }

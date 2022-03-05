@@ -8,9 +8,9 @@ namespace SAP.Domain.Services
 {
     public interface ILookupService
     {
-        Task<List<KeyValuePair<string, string>>> GetAllLookupHeadersAsync();
+        Task<List<ListItemDto>> GetAllLookupHeadersAsync();
         Task<List<LookupDto>> GetByHeaderIdAsync(string headerId);
-        Task<List<KeyValuePair<string, string>>> GetActiveLookupsAsListItemseAsync(string headerCode);
+        Task<List<ListItemDto>> GetActiveLookupsAsListItemseAsync(string headerCode);
         Task<LookupDto> GetAsync(string id);
         Task<string> CreateAsync(LookupDto lookup);
         Task UpdateAsync(string id, LookupDto lookup);

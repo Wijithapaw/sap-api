@@ -52,6 +52,8 @@ namespace SAP.Api
                     //Create admin user
                     var admin = new User
                     {
+                        FirstName = "Wijitha",
+                        LastName = "Wijenayake",
                         Email = "wijithapaw@gmail.com",                        
                         UserName = "wijithapaw@gmail.com",
                         SecurityStamp = Guid.NewGuid().ToString(),
@@ -61,9 +63,9 @@ namespace SAP.Api
                     await userManager.CreateAsync(admin, "User@123");
 
                     //Create Roles
-                    var adminRole = new Role { Id = "role-admin", Name = "Admin" };
-                    var pmRole = new Role { Id = "role-project-manager", Name = "ProjectManager" };
-                    var analyzerRole = new Role { Id = "role-data-analyzer", Name = "DataAnalyzer" };
+                    var adminRole = new Role { Id = "role-admin", Name = IdentityRoles.Admin };
+                    var pmRole = new Role { Id = "role-project-manager", Name = IdentityRoles.ProjectManager };
+                    var analyzerRole = new Role { Id = "role-data-analyzer", Name = IdentityRoles.DataAnalyzer };
 
                     await roleManager.CreateAsync(adminRole);
                     await roleManager.CreateAsync(pmRole);
@@ -81,7 +83,7 @@ namespace SAP.Api
                     await roleManager.AddClaimAsync(analyzerRole, new Claim(CustomsClaimTypes.SapPermission, CustomClaims.FinancialReports));
 
                     //Add Admin role to admin user
-                    await userManager.AddToRoleAsync(admin, "Admin");
+                    await userManager.AddToRoleAsync(admin, IdentityRoles.Admin);
                 }
             }
         }

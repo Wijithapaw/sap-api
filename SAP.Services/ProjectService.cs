@@ -67,15 +67,7 @@ namespace SAP.Services
 
         public async Task<List<ProjectDto>> SearchAsync(string searchTerm = null, bool activeOnly = false)
         {
-            searchTerm = searchTerm?.Trim().ToLower();
-
-            var activeStates = new ProjectState[] { ProjectState.Pending, ProjectState.Inprogress };
-
-            var projects = await _dbContext.Projects
-                .Where(p => (!activeOnly || activeStates.Contains(p.State))
-                    && (string.IsNullOrEmpty(searchTerm)
-                        || p.Title.ToLower().Contains(searchTerm)
-                        || p.Description.ToLower().Contains(searchTerm)))
+            var projects = await SearchQuery(searchTerm, activeOnly)
                 .Select(p => new ProjectDto
                 {
                     Id = p.Id,
@@ -84,6 +76,19 @@ namespace SAP.Services
                     StartDate = p.StartDate,
                     EndDate = p.EndDate,
                     State = p.State
+                }).ToListAsync();
+
+            return projects;
+        }
+
+        public async Task<List<ListItemDto>> GetProjectsListItemsAsync(string searchTerm = null)
+        {
+            var projects = await SearchQuery(searchTerm, false)
+                .Select(p => new ListItemDto
+                {
+                    Key = p.Id,
+                    Value = p.Title
+                   
                 }).ToListAsync();
 
             return projects;
@@ -103,6 +108,21 @@ namespace SAP.Services
             project.State = dto.State;
 
             await _dbContext.SaveChangesAsync();
+        }
+
+        private IQueryable<Project> SearchQuery(string searchTerm = null, bool activeOnly = false)
+        {
+            searchTerm = searchTerm?.Trim().ToLower();
+
+            var activeStates = new ProjectState[] { ProjectState.Pending, ProjectState.Inprogress };
+
+            var projects = _dbContext.Projects
+                .Where(p => (!activeOnly || activeStates.Contains(p.State))
+                    && (string.IsNullOrEmpty(searchTerm)
+                        || p.Title.ToLower().Contains(searchTerm)
+                        || p.Description.ToLower().Contains(searchTerm)));
+
+            return projects;
         }
     }
 }

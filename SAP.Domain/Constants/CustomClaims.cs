@@ -16,4 +16,11 @@ namespace SAP.Domain.Constants
     {
         public const string SapPermission = "sap/permission";
     }
+
+    public static class IdentityRoles
+    {
+        public const string Admin = "Admin";
+        public const string ProjectManager = "ProjectManager";
+        public const string DataAnalyzer = "DataAnalyzer";
+    }
 }

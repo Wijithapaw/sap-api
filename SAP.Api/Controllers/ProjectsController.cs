@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using SAP.Domain.Dtos;
 using SAP.Domain.Services;
 using System.Collections.Generic;
@@ -22,6 +21,12 @@ namespace SAP.Api.Controllers
         public async Task<List<ProjectDto>> Get(string searchTerm, bool activeOnly)
         {
             return await _projectService.SearchAsync(searchTerm, activeOnly);
+        }
+
+        [HttpGet("listitems")]
+        public async Task<List<ListItemDto>> GetListItems(string searchTerm)
+        {
+            return await _projectService.GetProjectsListItemsAsync(searchTerm);
         }
 
         [HttpGet("{id}")]

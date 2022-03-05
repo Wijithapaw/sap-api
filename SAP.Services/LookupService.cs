@@ -46,10 +46,10 @@ namespace SAP.Services
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<List<KeyValuePair<string, string>>> GetAllLookupHeadersAsync()
+        public async Task<List<ListItemDto>> GetAllLookupHeadersAsync()
         {
             var headers = await _dbContext.LookupHeaders
-                .Select(h => new KeyValuePair<string, string>(h.Id, h.Name))
+                .Select(h => new ListItemDto(h.Id, h.Name))
                 .ToListAsync();
 
             return headers;
@@ -87,11 +87,11 @@ namespace SAP.Services
             return lookups;
         }
 
-        public async Task<List<KeyValuePair<string, string>>> GetActiveLookupsAsListItemseAsync(string headerCode)
+        public async Task<List<ListItemDto>> GetActiveLookupsAsListItemseAsync(string headerCode)
         {
             var lookups = await _dbContext.Lookups
                .Where(l => l.Header.Code == headerCode && !l.Inactive)
-               .Select(h => new KeyValuePair<string, string>(h.Id, h.Name))
+               .Select(h => new ListItemDto(h.Id, h.Name))
                .ToListAsync();
 
             return lookups;

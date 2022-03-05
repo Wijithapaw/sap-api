@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace SAP.Domain.Services
 {
-    public interface IIdentityService
+    public interface IUserService
     {
         Task<LoginResultDto> LoginAsync(LoginRequestDto loginRequest);
+        Task<List<ListItemDto>> GetUsersListItemsByRoleAsync(string roleName);
     }
 }
