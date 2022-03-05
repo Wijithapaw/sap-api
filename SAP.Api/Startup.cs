@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SAP.Api.Authorization;
+using SAP.Api.Middlewares;
 using SAP.Data;
 using SAP.Domain;
 using SAP.Domain.ConfigSettings;
@@ -151,6 +152,7 @@ namespace SAP.Api
             services.AddScoped<IRequestContext, RequestContext>();
             services.AddScoped<IProjectService, ProjectService>();
             services.AddScoped<ILookupService, LookupService>();
+            services.AddScoped<ITagService, TagService>();
 
             //Config Settings
             services.Configure<JwtSettings>(Configuration.GetSection("JwtSettings"));
@@ -175,6 +177,8 @@ namespace SAP.Api
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseRequestContext();
 
             app.UseEndpoints(endpoints =>
             {

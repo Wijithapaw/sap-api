@@ -34,7 +34,7 @@ namespace SAP.Tests.Helpers
             return options;
         }
 
-        private static IRequestContext GetRequestContext() => new RequestContext { UserId = "unit-test" };
+        public static IRequestContext GetRequestContext() => new RequestContext { UserId = "unit-test" };
 
         /// <summary>
         /// This is a helper method to execute the 3 stages (Setting up test data, Test execution, Additinal validations) of a test method

@@ -32,7 +32,7 @@ namespace SAP.Api.Controllers
         }
 
         [HttpGet("projectmanagers")]
-        [ClaimAuthorize(CustomClaims.ProjectsAllAccess)]
+        [ClaimAuthorize(CustomClaims.ProjectsFullAccess)]
         public async Task<List<ListItemDto>> GetProjectManagers()
         {
             return await _userService.GetUsersListItemsByRoleAsync(IdentityRoles.ProjectManager);

@@ -70,5 +70,20 @@ namespace SAP.Tests.Helpers
                 return lookups;
             }
         }
+
+        internal static class Tags
+        {
+            public static Tag[] GetTags()
+            {
+                var tags = new Tag[]
+                {
+                    EntityHelper.GetTag("t-1", "infrastructure"),
+                    EntityHelper.GetTag("t-2", "irrigation"),
+                    EntityHelper.GetTag("t-3", "construction"),
+                    EntityHelper.GetTag("t-4", "cultivation"),
+                };
+                return tags;
+            }
+        }
     }
 }

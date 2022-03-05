@@ -43,7 +43,7 @@ namespace SAP.Api
                 var roleManager = scope.ServiceProvider.GetService<RoleManager<Role>>();
 
                 //TODO remove this after initial pharse of development
-                //dbContext.Database.EnsureDeleted();
+                dbContext.Database.EnsureDeleted();
 
                 await dbContext.Database.MigrateAsync();
 
@@ -73,8 +73,8 @@ namespace SAP.Api
 
                     //Add basic claims to roles
                     await roleManager.AddClaimAsync(adminRole, new Claim(CustomsClaimTypes.SapPermission, CustomClaims.FinancialReports));
-                    await roleManager.AddClaimAsync(adminRole, new Claim(CustomsClaimTypes.SapPermission, CustomClaims.LookupsManage));
-                    await roleManager.AddClaimAsync(adminRole, new Claim(CustomsClaimTypes.SapPermission, CustomClaims.ProjectsAllAccess));
+                    await roleManager.AddClaimAsync(adminRole, new Claim(CustomsClaimTypes.SapPermission, CustomClaims.LookupsFullAccess));
+                    await roleManager.AddClaimAsync(adminRole, new Claim(CustomsClaimTypes.SapPermission, CustomClaims.ProjectsFullAccess));
                     await roleManager.AddClaimAsync(adminRole, new Claim(CustomsClaimTypes.SapPermission, CustomClaims.TransactionEntry));
 
                     await roleManager.AddClaimAsync(pmRole, new Claim(CustomsClaimTypes.SapPermission, CustomClaims.FinancialReports));

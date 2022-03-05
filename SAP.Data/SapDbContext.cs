@@ -49,12 +49,16 @@ namespace SAP.Data
             //Indexes
             builder.Entity<LookupHeader>().HasIndex(e => e.Code).IsUnique();
             builder.Entity<Lookup>().HasIndex(e => new { e.HeaderId, e.Code }).IsUnique();
+            builder.Entity<Tag>().HasIndex(e => e.Name).IsUnique();
+            builder.Entity<ProjectTag>().HasIndex(e => new { e.ProjectId, e.TagId }).IsUnique();
         }
 
         //Entities
         public DbSet<Project> Projects { get; set; }
         public DbSet<LookupHeader> LookupHeaders { get; set; }
         public DbSet<Lookup> Lookups { get; set; }
+        public DbSet<Tag> Tags { get; set; }
+        public DbSet<ProjectTag> ProjectTags { get; set; }
 
         public override int SaveChanges()
         {

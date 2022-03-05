@@ -20,7 +20,7 @@ namespace SAP.Api.Controllers
         }
 
         [HttpGet]
-        [ClaimAuthorize(CustomClaims.ProjectsAllAccess)]
+        [ClaimAuthorize(CustomClaims.ProjectsFullAccess)]
         public async Task<List<ProjectDto>> Get(string searchTerm, bool activeOnly)
         {
             return await _projectService.SearchAsync(searchTerm, activeOnly);
@@ -33,31 +33,38 @@ namespace SAP.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        [ClaimAuthorize(CustomClaims.ProjectsAllAccess)]
+        [ClaimAuthorize(CustomClaims.ProjectsFullAccess)]
         public async Task<ProjectDto> Get(string id)
         {
             return await _projectService.GetAsync(id);
         }
 
         [HttpPost]
-        [ClaimAuthorize(CustomClaims.ProjectsAllAccess)]
+        [ClaimAuthorize(CustomClaims.ProjectsFullAccess)]
         public async Task<string> PostAsync([FromBody] ProjectDto value)
         {
             return await _projectService.CreateAsync(value);
         }
 
         [HttpPut("{id}")]
-        [ClaimAuthorize(CustomClaims.ProjectsAllAccess)]
+        [ClaimAuthorize(CustomClaims.ProjectsFullAccess)]
         public async void Put(string id, [FromBody] ProjectDto value)
         {
             await _projectService.UpdateAsync(id, value);
         }
 
         [HttpDelete("{id}")]
-        [ClaimAuthorize(CustomClaims.ProjectsAllAccess)]
+        [ClaimAuthorize(CustomClaims.ProjectsFullAccess)]
         public async void Delete(string id)
         {
             await _projectService.DeleteAsync(id);
+        }
+
+        [HttpPost("tag/{projectId}")]
+        [ClaimAuthorize(CustomClaims.ProjectsFullAccess)]
+        public async void AddTag(string projectId, ListItemDto tag)
+        {
+            await _projectService.AddTagAsync(projectId, tag);
         }
     }
 }

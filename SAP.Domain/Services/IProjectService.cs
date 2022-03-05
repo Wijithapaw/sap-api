@@ -8,6 +8,7 @@ namespace SAP.Domain.Services
 {
     public interface IProjectService
     {
+        Task AddTagAsync(string projectId, ListItemDto tags);
         Task<string> CreateAsync(ProjectDto project);
         Task DeleteAsync(string id);
         Task<List<ProjectDto>> SearchAsync(string searchTerm = null, bool activeOnly = false);

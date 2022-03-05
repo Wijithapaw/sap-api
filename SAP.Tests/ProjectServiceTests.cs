@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using SAP.Domain;
+using SAP.Domain.Constants;
+using SAP.Domain.Dtos;
 using SAP.Domain.Enums;
 using SAP.Services;
 using SAP.Tests.Helpers;
@@ -14,12 +16,16 @@ namespace SAP.Tests
     {
         public class Search
         {
-            [Theory]
-            [InlineData(null, false, 4)]
-            [InlineData(null, true, 2)]
-            [InlineData("BRIDGE", false, 1)]
-            [InlineData("infra", false, 2)]
-            public async Task WhenProjectsAvailable_ReturnAsPerFilter(string searchTerm, bool activeOnly, int expectedCount)
+            [Theory]            
+            [InlineData(null, false, 4, "u-1", true)]
+            [InlineData(null, true, 2, "u-1", true)]
+            [InlineData("BRIDGE", false, 1, "u-1", true)]
+            [InlineData("infra", false, 2, "u-1", true)]
+            [InlineData(null, false, 2, "u-1", false)]
+            [InlineData(null, true, 0, "u-1", false)]
+            [InlineData("Pap", false, 1, "u-2", false)]
+            [InlineData(null, false, 0, "u-3", false)]
+            public async Task WhenProjectsAvailable_ReturnAsPerFilter(string searchTerm, bool activeOnly, int expectedCount, string reqCtxUserId, bool hasAllProjectAccess)
             {
                 await DbHelper.ExecuteTestAsync(
                     async (IDbContext dbContext) =>
@@ -28,9 +34,48 @@ namespace SAP.Tests
                     },
                     async (IDbContext dbContext) =>
                     {
-                        var service = CreateService(dbContext);
+                        var requestContext = DbHelper.GetRequestContext();
+
+                        requestContext.UserId = reqCtxUserId;
+                        if (hasAllProjectAccess)
+                            requestContext.PermissionClaims = new string[] { CustomClaims.ProjectsFullAccess };
+
+                        var service = CreateService(dbContext, requestContext);
 
                         var projects = await service.SearchAsync(searchTerm, activeOnly);
+
+                        Assert.Equal(expectedCount, projects.Count);
+                    });
+            }
+        }
+
+        public class GetProjectsListItems
+        {
+            [Theory]
+            [InlineData(null, 4, "u-1", true)]
+            [InlineData("BRIDGE", 1, "u-1", true)]
+            [InlineData("infra", 2, "u-1", true)]
+            [InlineData(null, 2, "u-1", false)]
+            [InlineData("Pap", 1, "u-2", false)]
+            [InlineData(null, 0, "u-3", false)]
+            public async Task WhenProjectsAvailable_ReturnAsPerFilter(string searchTerm, int expectedCount, string reqCtxUserId, bool hasAllProjectAccess)
+            {
+                await DbHelper.ExecuteTestAsync(
+                    async (IDbContext dbContext) =>
+                    {
+                        await SetupTestDataAsync(dbContext);
+                    },
+                    async (IDbContext dbContext) =>
+                    {
+                        var requestContext = DbHelper.GetRequestContext();
+
+                        requestContext.UserId = reqCtxUserId;
+                        if (hasAllProjectAccess)
+                            requestContext.PermissionClaims = new string[] { CustomClaims.ProjectsFullAccess };
+
+                        var service = CreateService(dbContext, requestContext);
+
+                        var projects = await service.GetProjectsListItemsAsync(searchTerm);
 
                         Assert.Equal(expectedCount, projects.Count);
                     });
@@ -217,18 +262,70 @@ namespace SAP.Tests
             }
         }
 
+        public class AddTag
+        {
+            [Fact]
+            public async Task WhenAddingExistingTag_AddsSuccessfully()
+            {
+                await DbHelper.ExecuteTestAsync(
+                   async (IDbContext dbContext) =>
+                   {
+                       await SetupTestDataAsync(dbContext);
+                   },
+                   async (IDbContext dbContext) =>
+                   {
+                       var service = CreateService(dbContext);
+
+                       await service.AddTagAsync("p-1", new ListItemDto { Key = "t-1" });
+                   },
+                   async (IDbContext dbContext) =>
+                   {
+                       var projectTag = await dbContext.ProjectTags
+                       .FirstOrDefaultAsync(pt => pt.ProjectId == "p-1" && pt.TagId == "t-1");
+
+                       Assert.NotNull(projectTag);
+                   });
+            }
+
+            [Fact]
+            public async Task WhenAddingNewTag_CreatesAndAddsSuccessfully()
+            {
+                await DbHelper.ExecuteTestAsync(
+                   async (IDbContext dbContext) =>
+                   {
+                       await SetupTestDataAsync(dbContext);
+                   },
+                   async (IDbContext dbContext) =>
+                   {
+                       var service = CreateService(dbContext);
+
+                       await service.AddTagAsync("p-1", new ListItemDto { Value = "My New Tag" });
+                   },
+                   async (IDbContext dbContext) =>
+                   {
+                       var projectTag = await dbContext.ProjectTags
+                       .FirstOrDefaultAsync(pt => pt.ProjectId == "p-1" && pt.Tag.Name == "my new tag");
+
+                       Assert.NotNull(projectTag);
+                   });
+            }
+        }
 
         private static async Task SetupTestDataAsync(IDbContext dbContext)
         {
             dbContext.Users.AddRange(TestData.Users.GetUsers());
             dbContext.Projects.AddRange(TestData.Projects.GetProjects());
+            dbContext.Tags.AddRange(TestData.Tags.GetTags());
 
             await dbContext.SaveChangesAsync();
         }
 
-        private static ProjectService CreateService(IDbContext dbContext)
+        private static ProjectService CreateService(IDbContext dbContext, IRequestContext requestContext = null)
         {
-            var service = new ProjectService(dbContext);
+            requestContext = requestContext ?? DbHelper.GetRequestContext();
+            var tagService = new TagService(dbContext);
+
+            var service = new ProjectService(dbContext, tagService, requestContext);
             return service;
         }
     }

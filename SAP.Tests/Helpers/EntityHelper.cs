@@ -72,5 +72,15 @@ namespace SAP.Tests.Helpers
 
             return user;
         }
+
+        internal static Tag GetTag(string id, string name)
+        {
+            var tag = new Tag
+            {
+                Id = id,
+                Name = name,
+            };
+            return tag;
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SAP.Domain;
+using SAP.Domain.Constants;
 using SAP.Domain.Dtos;
 using SAP.Domain.Entities;
 using SAP.Domain.Enums;
@@ -15,10 +16,16 @@ namespace SAP.Services
     public class ProjectService : IProjectService
     {
         private readonly IDbContext _dbContext;
+        private readonly ITagService _tagService;
+        private readonly IRequestContext _requestContext;
 
-        public ProjectService(IDbContext dbContext)
+        public ProjectService(IDbContext dbContext,
+            ITagService tagService,
+            IRequestContext requestContext)
         {
             _dbContext = dbContext;
+            _tagService = tagService;
+            _requestContext = requestContext;
         }
 
         public async Task<string> CreateAsync(ProjectDto dto)
@@ -115,6 +122,20 @@ namespace SAP.Services
             await _dbContext.SaveChangesAsync();
         }
 
+        public async Task AddTagAsync(string projectId, ListItemDto tag)
+        {
+            if (string.IsNullOrEmpty(tag.Key))
+            {
+                tag.Key = await _tagService.CreateAsync(tag.Value);
+            }
+
+            var projectTag = new ProjectTag { ProjectId = projectId, TagId = tag.Key };
+
+            _dbContext.ProjectTags.Add(projectTag);
+
+            await _dbContext.SaveChangesAsync();
+        }
+
         private IQueryable<Project> SearchQuery(string searchTerm = null, bool activeOnly = false)
         {
             searchTerm = searchTerm?.Trim().ToLower();
@@ -123,6 +144,7 @@ namespace SAP.Services
 
             var projects = _dbContext.Projects
                 .Where(p => (!activeOnly || activeStates.Contains(p.State))
+                    && (_requestContext.HasPermission(CustomClaims.ProjectsFullAccess) || _requestContext.UserId == p.ProjectManagerId)
                     && (string.IsNullOrEmpty(searchTerm)
                         || p.Title.ToLower().Contains(searchTerm)
                         || p.Description.ToLower().Contains(searchTerm)));
