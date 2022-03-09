@@ -26,7 +26,7 @@ namespace SAP.Api.Controllers
             return await _projectService.SearchAsync(searchTerm, activeOnly);
         }
 
-        [HttpGet("listitems")]
+        [HttpGet("ListItems")]
         public async Task<List<ListItemDto>> GetListItems(string searchTerm)
         {
             return await _projectService.GetProjectsListItemsAsync(searchTerm);
@@ -60,7 +60,7 @@ namespace SAP.Api.Controllers
             await _projectService.DeleteAsync(id);
         }
 
-        [HttpPost("tag/{projectId}")]
+        [HttpPost("Tag/{projectId}")]
         [ClaimAuthorize(CustomClaims.ProjectsFullAccess)]
         public async void AddTag(string projectId, ListItemDto tag)
         {

@@ -51,14 +51,14 @@ namespace SAP.Api.Controllers
             await _transactionService.DeleteAsync(id);
         }
 
-        [HttpPatch("reconcile/{id}")]
+        [HttpPatch("Reconcile/{id}")]
         [ClaimAuthorize(CustomClaims.TransactionReconcile)]
         public async Task Reconcile(string id)
         {
             await _transactionService.ReconcileAsync(id);
         }
 
-        [HttpPatch("unreconcile/{id}")]
+        [HttpPatch("UnReconcile/{id}")]
         [ClaimAuthorize(CustomClaims.TransactionReconcile)]
         public async Task UnReconcile(string id)
         {

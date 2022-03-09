@@ -24,14 +24,14 @@ namespace SAP.Api.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost("login")]
+        [HttpPost("Login")]
         public async Task<LoginResultDto> Login(LoginRequestDto loginRequest)
         {
             var result = await _userService.LoginAsync(loginRequest);
             return result;
         }
 
-        [HttpGet("projectmanagers")]
+        [HttpGet("ProjectManagers")]
         [ClaimAuthorize(CustomClaims.ProjectsFullAccess)]
         public async Task<List<ListItemDto>> GetProjectManagers()
         {

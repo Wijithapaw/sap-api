@@ -20,21 +20,21 @@ namespace SAP.Api.Controllers
             _lookupService = lookupService;
         }
 
-        [HttpGet("allheaders")]
+        [HttpGet("AllHeaders")]
         [ClaimAuthorize(CustomClaims.LookupsFullAccess)]
         public async Task<List<ListItemDto>> GetAllHeaders()
         {
             return await _lookupService.GetAllLookupHeadersAsync();
         }
 
-        [HttpGet("byheader/{headerId}")]
+        [HttpGet("ByHeader/{headerId}")]
         [ClaimAuthorize(CustomClaims.LookupsFullAccess)]
         public async Task<List<LookupDto>> GetAllByHeaderId(string headerId)
         {
             return await _lookupService.GetByHeaderIdAsync(headerId);
         }
 
-        [HttpGet("active/listitems/{headercode}")]
+        [HttpGet("Active/ListItems/{headercode}")]
         public async Task<List<ListItemDto>> GetListItemsByHeader(string headerCode)
         {
             return await _lookupService.GetActiveLookupsAsListItemseAsync(headerCode);
