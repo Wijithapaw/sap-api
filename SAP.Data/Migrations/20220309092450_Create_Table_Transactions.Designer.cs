@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SAP.Data;
 
 namespace SAP.Data.Migrations
 {
     [DbContext(typeof(SapDbContext))]
-    partial class SapDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220309092450_Create_Table_Transactions")]
+    partial class Create_Table_Transactions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -230,11 +232,6 @@ namespace SAP.Data.Migrations
                     b.Property<DateTime>("LastUpdatedDateUtc")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
-
                     b.Property<string>("ProjectManagerId")
                         .HasColumnType("nvarchar(450)");
 
@@ -243,6 +240,11 @@ namespace SAP.Data.Migrations
 
                     b.Property<int>("State")
                         .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.HasKey("Id");
 

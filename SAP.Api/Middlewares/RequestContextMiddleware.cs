@@ -21,7 +21,7 @@ namespace SAP.Api.Middlewares
         {
             var nameIdentifier = context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
             var permissions = context.User.Claims
-                .Where(c => c.Type == CustomsClaimTypes.SapPermission)
+                .Where(c => c.Type == CustomClaimTypes.SapPermission)
                 .Select(c => c.Value)
                 .ToArray();
 

@@ -13,7 +13,7 @@ namespace SAP.Domain.Entities
         [Required]
         [MinLength(3)]
         [MaxLength(50)]
-        public string Title { get; set; }
+        public string Name { get; set; }
         [MaxLength(500)]
         public string Description { get; set; }
         public DateTime? StartDate { get; set; }
@@ -22,5 +22,8 @@ namespace SAP.Domain.Entities
         public string ProjectManagerId { get; set; }
 
         public virtual User ProjectManager { get; set; }
+
+        public ICollection<Transaction> Transactions { get; set; }
+        public ICollection<ProjectTag> ProjectTags { get; set; }
     }
 }

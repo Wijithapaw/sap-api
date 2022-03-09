@@ -98,7 +98,7 @@ namespace SAP.Tests
 
                        var project = await service.GetAsync("p-1");
 
-                       Assert.Equal("Wire Fence",  project.Title);
+                       Assert.Equal("Wire Fence",  project.Name);
                        Assert.Equal("Infrastructure - Wire Fence", project.Description);
                        Assert.Equal(ProjectState.Completed, project.State);
                        Assert.Equal(new DateTime(2020, 4, 1), project.StartDate);
@@ -201,7 +201,7 @@ namespace SAP.Tests
                        var project = await dbContext.Projects.FindAsync(projectId);
 
                        Assert.NotNull(project);
-                       Assert.Equal(title, project.Title);
+                       Assert.Equal(title, project.Name);
                        Assert.Equal(desc, project.Description);
                        Assert.Equal(sDate, project.StartDate);
                        Assert.Equal(eDate, project.EndDate);
@@ -234,7 +234,7 @@ namespace SAP.Tests
                        var project = await dbContext.Projects.FindAsync("p-1");
 
                        Assert.NotNull(project);
-                       Assert.Equal("Wire Fence - Updated", project.Title);
+                       Assert.Equal("Wire Fence - Updated", project.Name);
                        Assert.Equal("Desc Updated", project.Description);
                        Assert.Equal(new DateTime(2022, 1, 1), project.StartDate);
                        Assert.Equal(new DateTime(2022, 1, 31), project.EndDate);

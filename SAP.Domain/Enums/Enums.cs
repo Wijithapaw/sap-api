@@ -11,4 +11,10 @@ namespace SAP.Domain.Enums
         Completed = 2,
         Abandoned = 3
     }
+
+    public enum TransactionCategory
+    {
+        Expense = 0,
+        Income = 1
+    }
 }

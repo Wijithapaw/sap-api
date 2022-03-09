@@ -9,7 +9,7 @@ namespace SAP.Tests.Helpers
     internal static class DtoHelper
     {
         internal static ProjectDto GetProjectDto(string id,
-            string title,
+            string name,
             string desc,
             DateTime? sDate,
             DateTime? eDate,
@@ -19,7 +19,7 @@ namespace SAP.Tests.Helpers
             var project = new ProjectDto
             {
                 Id = id,
-                Title = title,
+                Name = name,
                 Description = desc,
                 StartDate = sDate,
                 EndDate = eDate,
@@ -41,6 +41,27 @@ namespace SAP.Tests.Helpers
             };
 
             return lookup;
+        }
+
+        internal static TransactionDto GetTransactionDto(string id,
+            string projectId,
+            TransactionCategory category, 
+            string typeId,
+            double amount,
+            string description,
+            DateTime date)
+        {
+            var dto = new TransactionDto
+            {
+                Id = id,
+                Category = category,
+                TypeId = typeId,
+                Date = date,
+                Description = description,
+                Amount = amount,
+                ProjectId = projectId,
+            };
+            return dto;
         }
     }
 }

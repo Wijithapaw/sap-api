@@ -9,7 +9,7 @@ namespace SAP.Domain.Entities
     public class Tag : AuditedEntity
     {
         public string Id { get; set; }
-        [Required(AllowEmptyStrings = false), MinLength(3)]
+        [Required(AllowEmptyStrings = false), MinLength(3), MaxLength(30)]
         public string Name { get; set; }
     }
 }

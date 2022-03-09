@@ -32,7 +32,7 @@ namespace SAP.Services
         {
             var newProject = new Project
             {
-                Title = dto.Title,
+                Name = dto.Name,
                 Description = dto.Description,
                 State = dto.State,
                 StartDate = dto.StartDate,
@@ -63,7 +63,7 @@ namespace SAP.Services
                     .Select(p => new ProjectDto
                     {
                         Id = p.Id,
-                        Title = p.Title,
+                        Name = p.Name,
                         Description = p.Description,
                         State = p.State,
                         StartDate = p.StartDate,
@@ -81,7 +81,7 @@ namespace SAP.Services
                 .Select(p => new ProjectDto
                 {
                     Id = p.Id,
-                    Title = p.Title,
+                    Name = p.Name,
                     Description = p.Description,
                     StartDate = p.StartDate,
                     EndDate = p.EndDate,
@@ -98,7 +98,7 @@ namespace SAP.Services
                 .Select(p => new ListItemDto
                 {
                     Key = p.Id,
-                    Value = p.Title
+                    Value = p.Name
                    
                 }).ToListAsync();
 
@@ -112,7 +112,7 @@ namespace SAP.Services
             if (project == null)
                 throw new ApplicationException("ERR_RECORD_NOT_FOUND");
 
-            project.Title = dto.Title;
+            project.Name = dto.Name;
             project.Description = dto.Description;
             project.StartDate = dto.StartDate;
             project.EndDate = dto.EndDate;
@@ -146,7 +146,7 @@ namespace SAP.Services
                 .Where(p => (!activeOnly || activeStates.Contains(p.State))
                     && (_requestContext.HasPermission(CustomClaims.ProjectsFullAccess) || _requestContext.UserId == p.ProjectManagerId)
                     && (string.IsNullOrEmpty(searchTerm)
-                        || p.Title.ToLower().Contains(searchTerm)
+                        || p.Name.ToLower().Contains(searchTerm)
                         || p.Description.ToLower().Contains(searchTerm)));
 
             return projects;

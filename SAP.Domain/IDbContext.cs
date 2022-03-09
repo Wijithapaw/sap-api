@@ -15,6 +15,7 @@ namespace SAP.Domain
         DbSet<Lookup> Lookups { get; set; }
         DbSet<Tag> Tags { get; set; }
         DbSet<ProjectTag> ProjectTags { get; set; }
+        DbSet<Transaction> Transactions { get; set; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken));
     }

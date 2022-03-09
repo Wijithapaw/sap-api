@@ -37,6 +37,16 @@ namespace SAP.Tests.Helpers
 
                 return projects;
             }
+
+            public static ProjectTag[] GetProjectTags()
+            {
+                var projectTags = new ProjectTag[]
+                {
+                    new ProjectTag { ProjectId = "p-1", TagId="t-1" },
+                    new ProjectTag { ProjectId = "p-2", TagId="t-1" }
+                };
+                return projectTags;
+            }
         }
 
         internal static class Lookups
@@ -83,6 +93,29 @@ namespace SAP.Tests.Helpers
                     EntityHelper.GetTag("t-4", "cultivation"),
                 };
                 return tags;
+            }
+        }
+
+        internal static class Transactions
+        {
+            public static Transaction[] GetTransactions()
+            {
+                var txns = new Transaction[]
+                {
+                    EntityHelper.GetTransaction("t-1", "p-1", TransactionCategory.Expense, "lk-11", -100.00, "Daily Wage", new DateTime(2022, 1, 1), true, "u-1"),
+                    EntityHelper.GetTransaction("t-2", "p-1", TransactionCategory.Expense, "lk-12", -100.00, "Cement", new DateTime(2022, 1, 5)),
+                    EntityHelper.GetTransaction("t-3", "p-1", TransactionCategory.Income, "lk-21", 100.00, "Selling Coconut", new DateTime(2022, 1, 12), true, "u-1"),
+                    EntityHelper.GetTransaction("t-4", "p-2", TransactionCategory.Expense, "lk-13", 100.00, "Selling Coconut", new DateTime(2022, 1, 13)),
+                    EntityHelper.GetTransaction("t-5", "p-2", TransactionCategory.Income, "lk-21", 100.00, "Selling Coconut", new DateTime(2022, 1, 14)),
+                    EntityHelper.GetTransaction("t-6", "p-2", TransactionCategory.Income, "lk-21", 100.00, "Selling Coconut", new DateTime(2022, 1, 15)),
+                    EntityHelper.GetTransaction("t-7", "p-2", TransactionCategory.Income, "lk-21", 100.00, "Selling Coconut", new DateTime(2022, 1, 16)),
+                    EntityHelper.GetTransaction("t-8", "p-3", TransactionCategory.Income, "lk-21", 100.00, "Selling Coconut", new DateTime(2022, 2, 12)),
+                    EntityHelper.GetTransaction("t-9", "p-3", TransactionCategory.Income, "lk-21", 100.00, "Selling Coconut", new DateTime(2022, 3, 1)),
+                    EntityHelper.GetTransaction("t-10", "p-3", TransactionCategory.Income, "lk-21", 100.00, "Selling Coconut", new DateTime(2022, 3, 10)),
+
+                };
+
+                return txns;
             }
         }
     }

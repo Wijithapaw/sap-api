@@ -9,7 +9,7 @@ namespace SAP.Tests.Helpers
     internal static class EntityHelper
     {
         internal static Project GetProject(string id, 
-            string title, 
+            string name, 
             string desc, 
             DateTime? sDate, 
             DateTime? eDate, 
@@ -19,7 +19,7 @@ namespace SAP.Tests.Helpers
             var project = new Project
             {
                 Id = id,
-                Title = title,
+                Name = name,
                 Description = desc,
                 StartDate = sDate,
                 EndDate = eDate,
@@ -81,6 +81,31 @@ namespace SAP.Tests.Helpers
                 Name = name,
             };
             return tag;
+        }
+
+        internal static Transaction GetTransaction(string id,
+            string projectId,
+            TransactionCategory category,
+            string typeId,
+            double amount,
+            string description,
+            DateTime date,
+            bool reconciled = false,
+            string reconciledById = null)
+        {
+            var txn = new Transaction
+            {
+                Id = id,
+                Category = category,
+                TypeId = typeId,
+                Date = date,
+                Description = description,
+                Amount = amount,
+                ProjectId = projectId,
+                Reconciled = reconciled,
+                ReconciledById = reconciledById
+            };
+            return txn;
         }
     }
 }

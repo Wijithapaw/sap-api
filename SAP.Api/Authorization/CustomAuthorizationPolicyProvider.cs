@@ -24,7 +24,7 @@ namespace SAP.Api.Authorization
 
             var policy = new AuthorizationPolicyBuilder();
 
-            policy.RequireClaim(CustomsClaimTypes.SapPermission, requiredClaim);
+            policy.RequireClaim(CustomClaimTypes.SapPermission, requiredClaim);
 
             return Task.FromResult(policy.Build());
         }
