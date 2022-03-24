@@ -337,8 +337,8 @@ namespace SAP.Tests
 
             [Theory]
             [MemberData(nameof(TestData))]
-            public async Task BasedOnFileter_ReturnsTransactions(DateTime from, 
-                DateTime to, 
+            public async Task BasedOnFileter_ReturnsTransactions(DateTime? from, 
+                DateTime? to, 
                 string projects, 
                 TransactionCategory? category, 
                 string[] types,
@@ -380,12 +380,14 @@ namespace SAP.Tests
                 new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), "*", null, null, null, null, new string[] { "t-1", "t-2", "t-3", "t-4", "t-5", "t-6", "t-7", "t-8", "t-9", "t-10" } },
                 new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), "*,p-1", null, null, null, null, new string[] { "t-1", "t-2", "t-3", "t-4", "t-5", "t-6", "t-7", "t-8", "t-9", "t-10" } },
                 new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), "*", TransactionCategory.Expense, new string[] { "lk-11", "lk-12" }, null, null, new string[] { "t-1", "t-2" } },
+                new object[] { null, new DateTime(2022, 1, 31), "*", null, null, null, null, new string[] { "t-1", "t-2", "t-3", "t-4", "t-5", "t-6", "t-7" } },
+                new object[] { new DateTime(2022, 2, 1), null, "*", null, null, null, null, new string[] { "t-8", "t-9", "t-10" } },
             };
 
             [Theory]
             [MemberData(nameof(TestData2))]
-            public async Task WhenThereIsAllProjectAccess_ReturnsTransactions(DateTime from,
-                DateTime to,
+            public async Task WhenThereIsAllProjectAccess_ReturnsTransactionsBasedOnDateFilter(DateTime? from,
+                DateTime? to,
                 string projects,
                 TransactionCategory? category,
                 string[] types,

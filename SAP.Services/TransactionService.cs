@@ -3,6 +3,7 @@ using SAP.Domain;
 using SAP.Domain.Constants;
 using SAP.Domain.Dtos;
 using SAP.Domain.Entities;
+using SAP.Domain.Enums;
 using SAP.Domain.Services;
 using System;
 using System.Collections.Generic;
@@ -29,7 +30,7 @@ namespace SAP.Services
             {
                 Category = dto.Category,
                 TypeId = dto.TypeId,
-                Amount = dto.Amount,
+                Amount = dto.Category == TransactionCategory.Expense ? Math.Abs(dto.Amount) * -1 : Math.Abs(dto.Amount),
                 Description = dto.Description,
                 Date = dto.Date,
                 ProjectId = dto.ProjectId,
@@ -98,8 +99,8 @@ namespace SAP.Services
 
             var txns = await _dbContext.Transactions
                 .Where(t => (projects.Contains("*") && _requestContext.HasPermission(CustomClaims.ProjectsFullAccess) || projects.Contains(t.ProjectId))
-                    && t.Date >= filter.FromDate
-                    && t.Date <= filter.ToDate
+                    && (filter.FromDate == null || t.Date >= filter.FromDate)
+                    && (filter.ToDate == null || t.Date <= filter.ToDate)
                     && (filter.Category == null || t.Category == filter.Category)
                     && (filter.CategotyTypes == null || !filter.CategotyTypes.Any() || filter.CategotyTypes.Contains(t.TypeId))
                     && (filter.Reconsiled == null || filter.Reconsiled == t.Reconciled)
@@ -107,6 +108,7 @@ namespace SAP.Services
                         || t.Description.ToLower().Contains(searchTerm)
                         || t.Project.ProjectTags.Any(pt => pt.Tag.Name.ToLower().Contains(searchTerm))))
                 .OrderBy(tr => tr.Date)
+                .ThenBy(tr => tr.CreatedDateUtc)
                 .Select(t => new TransactionDto
                 {
                     Id = t.Id,
@@ -141,7 +143,7 @@ namespace SAP.Services
         {
             var txn = await _dbContext.Transactions.FindAsync(id);
 
-            txn.Amount = dto.Amount;
+            txn.Amount = dto.Category == TransactionCategory.Expense ? Math.Abs(dto.Amount) * -1 : Math.Abs(dto.Amount);
             txn.Description = dto.Description;
             txn.Category = dto.Category;
             txn.TypeId = dto.TypeId;
