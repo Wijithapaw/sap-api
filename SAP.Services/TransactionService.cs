@@ -92,10 +92,12 @@ namespace SAP.Services
         public async Task<List<TransactionDto>> SearchAsync(TransactionSearchDto filter)
         {
             var searchTerm = filter.SearchTerm?.ToLower() ?? "";
-            filter.Projects = filter.Projects ?? new string[] { };
+            var projects = string.IsNullOrEmpty(filter.Projects) ? new string[] { } : filter.Projects.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(p => p.Trim());
+
+            var hasAllProjectAccess = _requestContext.HasPermission(CustomClaims.ProjectsFullAccess);
 
             var txns = await _dbContext.Transactions
-                .Where(t => filter.Projects.Contains(t.ProjectId)
+                .Where(t => (projects.Contains("*") && _requestContext.HasPermission(CustomClaims.ProjectsFullAccess) || projects.Contains(t.ProjectId))
                     && t.Date >= filter.FromDate
                     && t.Date <= filter.ToDate
                     && (filter.Category == null || t.Category == filter.Category)
@@ -104,6 +106,7 @@ namespace SAP.Services
                     && (searchTerm == ""
                         || t.Description.ToLower().Contains(searchTerm)
                         || t.Project.ProjectTags.Any(pt => pt.Tag.Name.ToLower().Contains(searchTerm))))
+                .OrderBy(tr => tr.Date)
                 .Select(t => new TransactionDto
                 {
                     Id = t.Id,

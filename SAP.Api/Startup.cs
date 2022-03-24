@@ -32,6 +32,8 @@ namespace SAP.Api
 {
     public class Startup
     {
+        string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -50,6 +52,18 @@ namespace SAP.Api
                 .AddDefaultTokenProviders();
 
             var jwtSettings = Configuration.GetSection("JwtSettings").Get<JwtSettings>();
+
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(
+                    builder =>
+                    {
+                        builder.WithOrigins("http://localhost:3000",
+                                            "http://www.contoso.com")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                    });
+            });
 
             services.AddControllers(options =>
             {
@@ -153,6 +167,7 @@ namespace SAP.Api
             services.AddScoped<IProjectService, ProjectService>();
             services.AddScoped<ILookupService, LookupService>();
             services.AddScoped<ITagService, TagService>();
+            services.AddScoped<ITransactionService, TransactionService>();
 
             //Config Settings
             services.Configure<JwtSettings>(Configuration.GetSection("JwtSettings"));
@@ -171,9 +186,11 @@ namespace SAP.Api
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "SAP API V1");
-            });
+            });           
 
             app.UseRouting();
+
+            app.UseCors();
 
             app.UseAuthentication();
             app.UseAuthorization();

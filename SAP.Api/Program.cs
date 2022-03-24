@@ -42,9 +42,6 @@ namespace SAP.Api
                 var userManager = scope.ServiceProvider.GetService<UserManager<User>>();
                 var roleManager = scope.ServiceProvider.GetService<RoleManager<Role>>();
 
-                //TODO remove this after initial pharse of development
-                dbContext.Database.EnsureDeleted();
-
                 await dbContext.Database.MigrateAsync();
 
                 if(!dbContext.Users.Any())

@@ -320,23 +320,26 @@ namespace SAP.Tests
             public static List<object[]> TestData => new List<object[]>
             {
                 new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), null, null, null, null, null, new string[] { } },
-                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), new string[] { "p-1", "p-2" , "p-3" }, null, null, null, null, new string[] { "t-1", "t-2", "t-3", "t-4", "t-5", "t-6", "t-7", "t-8", "t-9", "t-10" } },
-                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), new string[] { "p-1"}, null, null, null, null, new string[] { "t-1", "t-2", "t-3"} },
-                new object[] { new DateTime(2022, 2, 1), new DateTime(2022, 2, 28), new string[] { "p-1", "p-2" , "p-3" }, null, null, null, null, new string[] { "t-8" } },
-                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), new string[] { "p-1", "p-2" , "p-3" }, TransactionCategory.Income, null, null, null, new string[] { "t-3", "t-5", "t-6", "t-7", "t-8", "t-9", "t-10" } },
-                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), new string[] { "p-1", "p-2" , "p-3" }, TransactionCategory.Expense, new string[] { "lk-11", "lk-12" }, null, null, new string[] { "t-1", "t-2" } },
-                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), new string[] { "p-1", "p-2" , "p-3" }, TransactionCategory.Expense, new string[] { "lk-11", "lk-12" }, true, null, new string[] { "t-1" } },
-                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), new string[] { "p-1", "p-2" , "p-3" }, TransactionCategory.Expense, new string[] { "lk-11", "lk-12" }, false, null, new string[] { "t-2" } },
-                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), new string[] { "p-1", "p-2" , "p-3" }, TransactionCategory.Expense, new string[] { "lk-11", "lk-12" }, null, "cement", new string[] { "t-2" } },
-                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), new string[] { "p-1", "p-2" , "p-3" }, null, null, null, "coconut", new string[] { "t-3", "t-4", "t-5", "t-6", "t-7", "t-8", "t-9", "t-10" } },
-                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), new string[] { "p-1", "p-2" , "p-3" }, null, null, null, "infra", new string[] { "t-1", "t-2", "t-3", "t-4", "t-5", "t-6", "t-7" } },
+                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), "*", null, null, null, null, new string[] { } },
+                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), "*,p-1", null, null, null, null, new string[] { "t-1", "t-2", "t-3" } },
+                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), "p-1,p-2,p-3", null, null, null, null, new string[] { "t-1", "t-2", "t-3", "t-4", "t-5", "t-6", "t-7", "t-8", "t-9", "t-10" } },
+                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), "p-1", null, null, null, null, new string[] { "t-1", "t-2", "t-3"} },
+                new object[] { new DateTime(2022, 2, 1), new DateTime(2022, 2, 28), "p-1, p-2, p-3", null, null, null, null, new string[] { "t-8" } },
+                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), "p-1, p-2, p-3", TransactionCategory.Income, null, null, null, new string[] { "t-3", "t-5", "t-6", "t-7", "t-8", "t-9", "t-10" } },
+                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), "p-1, p-2, p-3", TransactionCategory.Expense, new string[] { "lk-11", "lk-12" }, null, null, new string[] { "t-1", "t-2" } },
+                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), "*", TransactionCategory.Expense, new string[] { }, null, null, new string[] { } },
+                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), "p-1, p-2,p-3", TransactionCategory.Expense, new string[] { "lk-11", "lk-12" }, true, null, new string[] { "t-1" } },
+                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), "p-1, p-2,p-3",TransactionCategory.Expense, new string[] { "lk-11", "lk-12" }, false, null, new string[] { "t-2" } },
+                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), "p-1, p-2,p-3",TransactionCategory.Expense, new string[] { "lk-11", "lk-12" }, null, "cement", new string[] { "t-2" } },
+                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), "p-1, p-2,p-3",null, null, null, "coconut", new string[] { "t-3", "t-4", "t-5", "t-6", "t-7", "t-8", "t-9", "t-10" } },
+                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), "p-1, p-2,p-3",null, null, null, "infra", new string[] { "t-1", "t-2", "t-3", "t-4", "t-5", "t-6", "t-7" } },
             };
 
             [Theory]
             [MemberData(nameof(TestData))]
             public async Task BasedOnFileter_ReturnsTransactions(DateTime from, 
                 DateTime to, 
-                string[] projects, 
+                string projects, 
                 TransactionCategory? category, 
                 string[] types,
                 bool? reconciled,
@@ -351,6 +354,58 @@ namespace SAP.Tests
                   async (IDbContext dbContext) =>
                   {
                       var service = CreateService(dbContext);
+
+                      var filter = new TransactionSearchDto
+                      {
+                          FromDate = from,
+                          ToDate = to,
+                          Category = category,
+                          Projects = projects,
+                          CategotyTypes = types,
+                          Reconsiled = reconciled,
+                          SearchTerm = searchTerm
+                      };
+
+                      var results = await service.SearchAsync(filter);
+
+                      var txnIds = results.Select(r => r.Id).OrderBy(id => id).ToArray();
+
+                      Assert.Equal(expectedTxnIds.OrderBy(id => id), txnIds);
+                  });
+            }
+
+
+            public static List<object[]> TestData2 => new List<object[]>
+            {
+                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), "*", null, null, null, null, new string[] { "t-1", "t-2", "t-3", "t-4", "t-5", "t-6", "t-7", "t-8", "t-9", "t-10" } },
+                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), "*,p-1", null, null, null, null, new string[] { "t-1", "t-2", "t-3", "t-4", "t-5", "t-6", "t-7", "t-8", "t-9", "t-10" } },
+                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), "*", TransactionCategory.Expense, new string[] { "lk-11", "lk-12" }, null, null, new string[] { "t-1", "t-2" } },
+            };
+
+            [Theory]
+            [MemberData(nameof(TestData2))]
+            public async Task WhenThereIsAllProjectAccess_ReturnsTransactions(DateTime from,
+                DateTime to,
+                string projects,
+                TransactionCategory? category,
+                string[] types,
+                bool? reconciled,
+                string searchTerm,
+                string[] expectedTxnIds)
+            {
+                await DbHelper.ExecuteTestAsync(
+                  async (IDbContext dbContext) =>
+                  {
+                      await SetupTestDataAsync(dbContext);
+                  },
+                  async (IDbContext dbContext) =>
+                  {
+                      var requestContext = DbHelper.GetRequestContext();
+
+                      requestContext.UserId = "u-1";
+                      requestContext.PermissionClaims = new string[] { CustomClaims.ProjectsFullAccess };
+
+                      var service = CreateService(dbContext, requestContext);
 
                       var filter = new TransactionSearchDto
                       {
@@ -388,7 +443,7 @@ namespace SAP.Tests
                           FromDate = new DateTime(2022, 1, 1),
                           ToDate = new DateTime(2022, 4, 1),
                           Category = null,
-                          Projects = new string[] { "p-1", "p-2", "p-3" },
+                          Projects = "p-1,p-2,p-3",
                           CategotyTypes = null,
                           Reconsiled = null,
                           SearchTerm = null

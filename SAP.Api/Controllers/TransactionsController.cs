@@ -22,7 +22,7 @@ namespace SAP.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<List<TransactionDto>> Get(TransactionSearchDto filter)
+        public async Task<List<TransactionDto>> Get([FromQuery] TransactionSearchDto filter)
         {
             return await _transactionService.SearchAsync(filter);
         }

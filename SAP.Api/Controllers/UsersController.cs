@@ -22,9 +22,9 @@ namespace SAP.Api.Controllers
         {
             _userService = userService;
         }
-
-        [AllowAnonymous]
+        
         [HttpPost("Login")]
+        [AllowAnonymous]
         public async Task<LoginResultDto> Login(LoginRequestDto loginRequest)
         {
             var result = await _userService.LoginAsync(loginRequest);
