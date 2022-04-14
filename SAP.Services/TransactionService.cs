@@ -107,8 +107,8 @@ namespace SAP.Services
                     && (searchTerm == ""
                         || t.Description.ToLower().Contains(searchTerm)
                         || t.Project.ProjectTags.Any(pt => pt.Tag.Name.ToLower().Contains(searchTerm))))
-                .OrderBy(tr => tr.Date)
-                .ThenBy(tr => tr.CreatedDateUtc)
+                .OrderByDescending(tr => tr.Date)
+                .ThenByDescending(tr => tr.CreatedDateUtc)
                 .Select(t => new TransactionDto
                 {
                     Id = t.Id,
