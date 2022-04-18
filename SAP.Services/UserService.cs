@@ -20,14 +20,17 @@ namespace SAP.Services
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<Role> _roleManager;
         private readonly JwtSettings _jwtSettings;
+        private readonly IRequestContext _requestContext;
 
         public UserService(UserManager<User> userManager, 
             RoleManager<Role> roleManager,
-            IOptions<JwtSettings> jwtSettings) 
+            IOptions<JwtSettings> jwtSettings,
+            IRequestContext requestContext) 
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _jwtSettings = jwtSettings.Value;
+            _requestContext = requestContext;
         }
 
         public async Task<LoginResultDto> LoginAsync(LoginRequestDto loginRequest)
@@ -56,6 +59,21 @@ namespace SAP.Services
                 Succeeded = false,
                 ErrorCode = "ERR_INVALID_LOGIN_ATTEMPT"
             };
+        }
+
+        public async Task<ChangePasswordResult> ChangePasswordAsync(ChangePasswordDto dto)
+        {
+            var user = await _userManager.FindByIdAsync(_requestContext.UserId);
+
+            var identityResult = await _userManager.ChangePasswordAsync(user, dto.CurrentPwd, dto.NewPwd);
+
+            var result = new ChangePasswordResult
+            {
+                Succeeded = identityResult.Succeeded,
+                ErrorMessage = string.Join(", ", identityResult.Errors.Select(e => e.Description))
+            };
+
+            return result;
         }
 
         public async Task<List<ListItemDto>> GetUsersListItemsByRoleAsync(string roleName)

@@ -10,5 +10,6 @@ namespace SAP.Domain.Services
     {
         Task<LoginResultDto> LoginAsync(LoginRequestDto loginRequest);
         Task<List<ListItemDto>> GetUsersListItemsByRoleAsync(string roleName);
+        Task<ChangePasswordResult> ChangePasswordAsync(ChangePasswordDto dto);
     }
 }

@@ -32,8 +32,6 @@ namespace SAP.Api
 {
     public class Startup
     {
-        string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
-
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -45,21 +43,21 @@ namespace SAP.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<SapDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+                options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddIdentity<User, Role>()
                 .AddEntityFrameworkStores<SapDbContext>()
                 .AddDefaultTokenProviders();
 
             var jwtSettings = Configuration.GetSection("JwtSettings").Get<JwtSettings>();
+            var corsOrigins = Configuration.GetSection("CorsOrigins").Get<string>();
 
             services.AddCors(options =>
             {
                 options.AddDefaultPolicy(
                     builder =>
                     {
-                        builder.WithOrigins("http://localhost:3000",
-                                            "http://www.contoso.com")
+                        builder.WithOrigins(corsOrigins.Split(';'))
                         .AllowAnyHeader()
                         .AllowAnyMethod();
                     });

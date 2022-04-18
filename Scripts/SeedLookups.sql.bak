@@ -23,5 +23,5 @@ begin
 	
 end $$;
 
---select * from "Lookups"
+select * from "Lookups"
 

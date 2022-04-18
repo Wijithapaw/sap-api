@@ -20,6 +20,8 @@ namespace SAP.Api
     {
         public static void Main(string[] args)
         {
+            SetEbConfig();
+
             var host = CreateHostBuilder(args).Build();
 
             SeedDataAsync(host).Wait();
@@ -82,6 +84,35 @@ namespace SAP.Api
                     //Add Admin role to admin user
                     await userManager.AddToRoleAsync(admin, IdentityRoles.Admin);
                 }
+            }
+        }
+
+        /// <summary>
+        /// This method is used to fix an issue AWS Beanstalk where it is unable to 
+        /// read environment variables
+        /// https://stackoverflow.com/questions/40127703/aws-elastic-beanstalk-environment-variables-in-asp-net-core-1-0/47648283#47648283
+        /// </summary>
+        private static void SetEbConfig()
+        {
+            var tempConfigBuilder = new ConfigurationBuilder();
+
+            tempConfigBuilder.AddJsonFile(
+                @"C:\Program Files\Amazon\ElasticBeanstalk\config\containerconfiguration",
+                optional: true,
+                reloadOnChange: true
+            );
+
+            var configuration = tempConfigBuilder.Build();
+
+            var ebEnv =
+                configuration.GetSection("iis:env")
+                    .GetChildren()
+                    .Select(pair => pair.Value.Split(new[] { '=' }, 2))
+                    .ToDictionary(keypair => keypair[0], keypair => keypair[1]);
+
+            foreach (var keyVal in ebEnv)
+            {
+                Environment.SetEnvironmentVariable(keyVal.Key, keyVal.Value);
             }
         }
     }

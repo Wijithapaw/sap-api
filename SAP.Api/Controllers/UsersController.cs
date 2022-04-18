@@ -31,6 +31,13 @@ namespace SAP.Api.Controllers
             return result;
         }
 
+        [HttpPost("ChangePassword")]
+        public async Task<ChangePasswordResult> ChangePassword(ChangePasswordDto dto)
+        {
+            var result = await _userService.ChangePasswordAsync(dto);
+            return result;
+        }
+
         [HttpGet("ProjectManagers")]
         [ClaimAuthorize(CustomClaims.ProjectsFullAccess)]
         public async Task<List<ListItemDto>> GetProjectManagers()
