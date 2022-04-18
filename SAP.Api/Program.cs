@@ -5,28 +5,47 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using NLog;
+using NLog.Web;
 using SAP.Data;
 using SAP.Domain.Constants;
 using SAP.Domain.Entities;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace SAP.Api
 {
     public class Program
     {
+        static Logger _logger;
+
         public static void Main(string[] args)
         {
             SetEbConfig();
 
-            var host = CreateHostBuilder(args).Build();
+            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            _logger = ConfigureLogger(env);
+            
+            try
+            {
+                _logger.Info("SAP API Starting....");
 
-            SeedDataAsync(host).Wait();
+                var host = CreateHostBuilder(args).Build();
 
-            host.Run();
+                SeedDataAsync(host).Wait();
+
+                host.Run();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Unable to start system due to unhandled exception");
+                throw;
+            }
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -34,7 +53,26 @@ namespace SAP.Api
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                });
+                })
+                .ConfigureLogging(logging =>
+                {
+                    logging.ClearProviders();
+                    logging.SetMinimumLevel(LogLevel.Trace);
+                })
+                .UseNLog();
+
+        public static Logger ConfigureLogger(string env)
+        {
+            var configFile = "nlog.config";
+
+            var envLogConfigPath = $"nlog.{env}.config";
+            if (File.Exists(envLogConfigPath))
+                configFile = envLogConfigPath;
+
+            var logger = LogManager.LoadConfiguration(configFile).GetCurrentClassLogger();
+
+            return logger;
+        }
 
         private static async Task SeedDataAsync(IHost host)
         {
