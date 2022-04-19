@@ -44,7 +44,8 @@ namespace SAP.Tests.Helpers
             string headerId, 
             string code, 
             string name, 
-            bool inactive = false)
+            bool inactive = false,
+            bool protectedLookup = false)
         {
             var lookup = new Lookup
             {
@@ -52,7 +53,8 @@ namespace SAP.Tests.Helpers
                 HeaderId = headerId,
                 Code = code,
                 Name = name,
-                Inactive = inactive
+                Inactive = inactive,
+                Protected = protectedLookup,
             };
             return lookup;
         }

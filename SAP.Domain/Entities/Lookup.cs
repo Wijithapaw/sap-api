@@ -17,6 +17,7 @@ namespace SAP.Domain.Entities
         [Required(AllowEmptyStrings = false), MinLength(2)]
         public string Name { get; set; }
         public bool Inactive { get; set; }
+        public bool Protected { get; set; }
 
         public virtual LookupHeader Header { get; set; }
     }

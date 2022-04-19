@@ -72,7 +72,7 @@ namespace SAP.Tests.Helpers
                     EntityHelper.GetLookup("lk-13", "h-1", "BILLS", "Bills"),
                     EntityHelper.GetLookup("lk-14", "h-1", "BASS_FEES", "Bass Fees", true),
 
-                    EntityHelper.GetLookup("lk-21", "h-2", "COCONUT", "Coconut"),
+                    EntityHelper.GetLookup("lk-21", "h-2", "COCONUT", "Coconut", false, true),
                     EntityHelper.GetLookup("lk-22", "h-2", "PAPOW", "Papow"),
                     EntityHelper.GetLookup("lk-23", "h-2", "VEGITABLE", "Vegitable"),
                 };

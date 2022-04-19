@@ -2,6 +2,7 @@
 using SAP.Domain;
 using SAP.Domain.Dtos;
 using SAP.Domain.Entities;
+using SAP.Domain.Exceptions;
 using SAP.Domain.Services;
 using System;
 using System.Collections.Generic;
@@ -41,6 +42,9 @@ namespace SAP.Services
         {
             var lookup = await _dbContext.Lookups.FindAsync(id);
 
+            if (lookup.Protected)
+                throw new SapException("ERR_PROTECTED_LOOKUP_DELETION");
+
             _dbContext.Lookups.Remove(lookup);
 
             await _dbContext.SaveChangesAsync();
@@ -75,6 +79,7 @@ namespace SAP.Services
         {
             var lookups = await _dbContext.Lookups
                 .Where(l => l.HeaderId == headerId)
+                .OrderBy(l => l.Name)
                 .Select(l => new LookupDto
                 {
                     Id = l.Id,
@@ -91,6 +96,7 @@ namespace SAP.Services
         {
             var lookups = await _dbContext.Lookups
                .Where(l => l.Header.Code == headerCode && !l.Inactive)
+               .OrderBy(l => l.Name)
                .Select(h => new ListItemDto(h.Id, h.Name))
                .ToListAsync();
 
@@ -100,6 +106,9 @@ namespace SAP.Services
         public async Task UpdateAsync(string id, LookupDto dto)
         {
             var lookup = await _dbContext.Lookups.FindAsync(id);
+
+            if (lookup.Protected)
+                throw new SapException("ERR_PROTECTED_LOOKUP_MODIFICATION");
 
             lookup.Code = dto.Code;
             lookup.Name = dto.Name;

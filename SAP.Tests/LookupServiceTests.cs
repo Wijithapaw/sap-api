@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SAP.Domain;
+using SAP.Domain.Exceptions;
 using SAP.Services;
 using SAP.Tests.Helpers;
 using System;
@@ -308,6 +309,26 @@ namespace SAP.Tests
                       var ex = await Assert.ThrowsAsync<DbUpdateException>(() => service.UpdateAsync(id, dto));
                   });
             }
+
+            [Fact]
+            public async Task WhenUpdatingProtectedLookup_ThrowsException()
+            {
+                await DbHelper.ExecuteTestAsync(
+                  async (IDbContext dbContext) =>
+                  {
+                      await SetupTestDataAsync(dbContext);
+                  },
+                  async (IDbContext dbContext) =>
+                  {
+                      var service = CreateService(dbContext);
+
+                      var dto = DtoHelper.GetLookupDto("lk-21", null, "MATERIAL", null, true);
+
+                      var ex = await Assert.ThrowsAsync<SapException>(() => service.UpdateAsync("lk-21", dto));
+
+                      Assert.Equal("ERR_PROTECTED_LOOKUP_MODIFICATION", ex.Message);
+                  });
+            }
         }
 
         public class Delete
@@ -331,6 +352,24 @@ namespace SAP.Tests
                       var lookup = await dbContext.Lookups.FindAsync("lk-11");
 
                       Assert.Null(lookup);
+                  });
+            }
+
+            [Fact]
+            public async Task WhenDeletingProtectedLookup_ThrowsException()
+            {
+                await DbHelper.ExecuteTestAsync(
+                  async (IDbContext dbContext) =>
+                  {
+                      await SetupTestDataAsync(dbContext);
+                  },
+                  async (IDbContext dbContext) =>
+                  {
+                      var service = CreateService(dbContext);
+
+                      var ex = await Assert.ThrowsAsync<SapException>(() =>service.DeleteAsync("lk-21"));
+
+                      Assert.Equal("ERR_PROTECTED_LOOKUP_DELETION", ex.Message);
                   });
             }
         }
