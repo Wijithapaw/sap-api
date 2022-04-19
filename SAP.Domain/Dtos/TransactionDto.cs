@@ -11,6 +11,7 @@ namespace SAP.Domain.Dtos
         public TransactionCategory Category { get; set; }
         public string TypeId { get; set; }
         public string Type { get; set; }
+        public string TypeCode { get; set; }
         public DateTime Date { get; set; }
         public string Description { get; set; }
         public string ProjectId { get; set; }
