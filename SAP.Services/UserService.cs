@@ -87,6 +87,25 @@ namespace SAP.Services
             return listItems;
         }
 
+        public async Task<string> RegisterUserAsync(UserRegisterDto dto)
+        {
+            var user = new User
+            {
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
+                Email = dto.Email,
+                UserName = dto.Username,
+                SecurityStamp = Guid.NewGuid().ToString(),
+                EmailConfirmed = true,
+            };
+
+            await _userManager.CreateAsync(user, "User@123"); //TODO: have a random password once forget password is implemented
+
+            await _userManager.AddToRoleAsync(user, dto.Role);
+
+            return user.Id;
+        }
+
         private async Task<string> CreateJwtTokenAsync(User user)
         {
             var roleNames = await _userManager.GetRolesAsync(user);
@@ -95,6 +114,7 @@ namespace SAP.Services
 
             claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id));
             claims.Add(new Claim(ClaimTypes.Email, user.Email));
+            claims.Add(new Claim(ClaimTypes.GivenName, user.FirstName));
 
             foreach (var roleName in roleNames)
             {

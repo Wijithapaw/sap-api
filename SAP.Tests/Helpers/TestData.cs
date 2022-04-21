@@ -103,7 +103,7 @@ namespace SAP.Tests.Helpers
                 var txns = new Transaction[]
                 {
                     EntityHelper.GetTransaction("t-1", "p-1", TransactionCategory.Expense, "lk-11", -100.00, "Daily Wage", new DateTime(2022, 1, 1), true, "u-1"),
-                    EntityHelper.GetTransaction("t-2", "p-1", TransactionCategory.Expense, "lk-12", -100.00, "Cement", new DateTime(2022, 1, 5)),
+                    EntityHelper.GetTransaction("t-2", "p-1", TransactionCategory.Expense, "lk-12", -100.00, "Cement", new DateTime(2022, 1, 5), false, null),
                     EntityHelper.GetTransaction("t-3", "p-1", TransactionCategory.Income, "lk-21", 100.00, "Selling Coconut", new DateTime(2022, 1, 12), true, "u-1"),
                     EntityHelper.GetTransaction("t-4", "p-2", TransactionCategory.Expense, "lk-13", 100.00, "Selling Coconut", new DateTime(2022, 1, 13)),
                     EntityHelper.GetTransaction("t-5", "p-2", TransactionCategory.Income, "lk-21", 100.00, "Selling Coconut", new DateTime(2022, 1, 14)),

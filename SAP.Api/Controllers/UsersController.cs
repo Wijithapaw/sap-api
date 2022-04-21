@@ -44,5 +44,12 @@ namespace SAP.Api.Controllers
         {
             return await _userService.GetUsersListItemsByRoleAsync(IdentityRoles.ProjectManager);
         }
+
+        [HttpPost("Register")]
+        [ClaimAuthorize(CustomClaims.UsersFullAccess)]
+        public async Task<string> RegisterUser(UserRegisterDto dto)
+        {
+            return await _userService.RegisterUserAsync(dto);
+        }
     }
 }

@@ -3,6 +3,7 @@ using SAP.Domain;
 using SAP.Domain.Constants;
 using SAP.Domain.Dtos;
 using SAP.Domain.Enums;
+using SAP.Domain.Exceptions;
 using SAP.Services;
 using SAP.Tests.Helpers;
 using System;
@@ -81,8 +82,9 @@ namespace SAP.Tests
                       var service = CreateService(dbContext, requestContext);
 
                       var dto = DtoHelper.GetTransactionDto(null, "p-1", TransactionCategory.Income, "lk-22", 100.00, null, new DateTime(2022, 1, 1));
+                      dto.Reconciled = true;
 
-                      txnId = await service.CreateAsync(dto, true);
+                      txnId = await service.CreateAsync(dto);
                   },
                   async (IDbContext dbContext) =>
                   {
@@ -117,8 +119,9 @@ namespace SAP.Tests
                       var service = CreateService(dbContext, requestContext);
 
                       var dto = DtoHelper.GetTransactionDto(null, "p-1", TransactionCategory.Income, "lk-22", 100.00, null, new DateTime(2022, 1, 1));
+                      dto.Reconciled = true;
 
-                      txnId = await service.CreateAsync(dto, true);
+                      txnId = await service.CreateAsync(dto);
                   },
                   async (IDbContext dbContext) =>
                   {
@@ -180,13 +183,13 @@ namespace SAP.Tests
                   {
                       var service = CreateService(dbContext);
 
-                      var dto = DtoHelper.GetTransactionDto("t-1", "p-2", TransactionCategory.Expense, "lk-11", -100.00, "Daily wage", new DateTime(2022, 2, 1));
+                      var dto = DtoHelper.GetTransactionDto("t-2", "p-2", TransactionCategory.Expense, "lk-11", -100.00, "Daily wage", new DateTime(2022, 2, 1));
 
-                      await service.UpdateAsync("t-1", dto);
+                      await service.UpdateAsync("t-2", dto);
                   },
                   async (IDbContext dbContext) =>
                   {
-                      var txn = await dbContext.Transactions.FindAsync("t-1");
+                      var txn = await dbContext.Transactions.FindAsync("t-2");
 
                       Assert.NotNull(txn);
                       Assert.Equal("p-2", txn.ProjectId);
@@ -199,65 +202,28 @@ namespace SAP.Tests
                   });
             }
 
-            public class Reconcile
+            [Fact]
+            public async Task WhenUpdatingReconciledTransaction_ThrowsAnException()
             {
-                [Fact]
-                public async Task Reconcile_Successfully()
-                {
-                    await DbHelper.ExecuteTestAsync(
+                await DbHelper.ExecuteTestAsync(
                   async (IDbContext dbContext) =>
                   {
                       await SetupTestDataAsync(dbContext);
                   },
                   async (IDbContext dbContext) =>
                   {
-                      var requestContext = DbHelper.GetRequestContext();
+                      var service = CreateService(dbContext);
 
-                      requestContext.UserId = "u-1";
+                      var dto = DtoHelper.GetTransactionDto("t-1", "p-2", TransactionCategory.Expense, "lk-11", -100.00, "Daily wage", new DateTime(2022, 2, 1));
 
-                      var service = CreateService(dbContext, requestContext);
+                      var ex = await Assert.ThrowsAnyAsync<SapException>(() => service.UpdateAsync("t-1", dto));
 
-                      await service.ReconcileAsync("t-2");
-                  },
-                  async (IDbContext dbContext) =>
-                  {
-                      var txn = await dbContext.Transactions.FindAsync("t-2");
-
-                      Assert.True(txn.Reconciled);
-                      Assert.Equal("u-1", txn.ReconciledById);
+                      Assert.Equal("ERR_CANT_UPDATE_RECONCILED_TXN", ex.Message);
                   });
-                }
-
-                [Fact]
-                public async Task UnReconcile_Successfully()
-                {
-                    await DbHelper.ExecuteTestAsync(
-                    async (IDbContext dbContext) =>
-                    {
-                        await SetupTestDataAsync(dbContext);
-                    },
-                    async (IDbContext dbContext) =>
-                    {
-                        var requestContext = DbHelper.GetRequestContext();
-
-                        requestContext.UserId = "u-1";
-
-                        var service = CreateService(dbContext, requestContext);
-
-                        await service.UnReconcileAsync("t-2");
-                    },
-                    async (IDbContext dbContext) =>
-                    {
-                        var txn = await dbContext.Transactions.FindAsync("t-2");
-
-                        Assert.False(txn.Reconciled);
-                        Assert.Null(txn.ReconciledById);
-                    });
-                }
             }
         }
 
-        public class Delete
+        public class Reconcile
         {
             [Fact]
             public async Task Reconcile_Successfully()
@@ -275,6 +241,63 @@ namespace SAP.Tests
 
                   var service = CreateService(dbContext, requestContext);
 
+                  await service.ReconcileAsync("t-2");
+              },
+              async (IDbContext dbContext) =>
+              {
+                  var txn = await dbContext.Transactions.FindAsync("t-2");
+
+                  Assert.True(txn.Reconciled);
+                  Assert.Equal("u-1", txn.ReconciledById);
+              });
+            }
+
+            [Fact]
+            public async Task UnReconcile_Successfully()
+            {
+                await DbHelper.ExecuteTestAsync(
+                async (IDbContext dbContext) =>
+                {
+                    await SetupTestDataAsync(dbContext);
+                },
+                async (IDbContext dbContext) =>
+                {
+                    var requestContext = DbHelper.GetRequestContext();
+
+                    requestContext.UserId = "u-1";
+
+                    var service = CreateService(dbContext, requestContext);
+
+                    await service.UnReconcileAsync("t-2");
+                },
+                async (IDbContext dbContext) =>
+                {
+                    var txn = await dbContext.Transactions.FindAsync("t-2");
+
+                    Assert.False(txn.Reconciled);
+                    Assert.Null(txn.ReconciledById);
+                });
+            }
+        }
+
+        public class Delete
+        {
+            [Fact]
+            public async Task Delete_Successfully()
+            {
+                await DbHelper.ExecuteTestAsync(
+              async (IDbContext dbContext) =>
+              {
+                  await SetupTestDataAsync(dbContext);
+              },
+              async (IDbContext dbContext) =>
+              {
+                  var requestContext = DbHelper.GetRequestContext();
+
+                  requestContext.UserId = "unit-test";
+
+                  var service = CreateService(dbContext, requestContext);
+
                   await service.DeleteAsync("t-2");
               },
               async (IDbContext dbContext) =>
@@ -282,6 +305,50 @@ namespace SAP.Tests
                   var txn = await dbContext.Transactions.FindAsync("t-2");
 
                   Assert.Null(txn);
+              });
+            }
+
+            [Fact]
+            public async Task WhenDoNotHavePermission_ThrowsAnException()
+            {
+                await DbHelper.ExecuteTestAsync(
+              async (IDbContext dbContext) =>
+              {
+                  await SetupTestDataAsync(dbContext);
+              },
+              async (IDbContext dbContext) =>
+              {
+                  var requestContext = DbHelper.GetRequestContext();
+
+                  requestContext.UserId = "unit-test-2";
+
+                  var service = CreateService(dbContext, requestContext);
+
+                  var ex = await Assert.ThrowsAnyAsync<SapException>(() => service.DeleteAsync("t-2"));
+
+                  Assert.Equal("ERR_INSUFFICIENT_PERMISSION_TO_DELETE_TRNASACTION", ex.Message);
+              });
+            }
+
+            [Fact]
+            public async Task WhenDeletingReconciledTransaction_ThrowsAnException()
+            {
+                await DbHelper.ExecuteTestAsync(
+              async (IDbContext dbContext) =>
+              {
+                  await SetupTestDataAsync(dbContext);
+              },
+              async (IDbContext dbContext) =>
+              {
+                  var requestContext = DbHelper.GetRequestContext();
+
+                  requestContext.UserId = "u-1";
+
+                  var service = CreateService(dbContext, requestContext);
+
+                  var ex = await Assert.ThrowsAnyAsync<SapException>(() => service.DeleteAsync("t-1"));
+
+                  Assert.Equal("ERR_CANT_DELETE_RECONCILED_TXN", ex.Message);
               });
             }
         }

@@ -4,6 +4,7 @@ using SAP.Domain.Constants;
 using SAP.Domain.Dtos;
 using SAP.Domain.Entities;
 using SAP.Domain.Enums;
+using SAP.Domain.Exceptions;
 using SAP.Domain.Services;
 using System;
 using System.Collections.Generic;
@@ -24,7 +25,7 @@ namespace SAP.Services
             _requestContext = requestContext;
         }
 
-        public async Task<string> CreateAsync(TransactionDto dto, bool autoReconcile = false)
+        public async Task<string> CreateAsync(TransactionDto dto)
         {
             var txn = new Transaction
             {
@@ -36,7 +37,7 @@ namespace SAP.Services
                 ProjectId = dto.ProjectId,
             };
 
-            if(autoReconcile && _requestContext.HasPermission(CustomClaims.TransactionReconcile))
+            if(dto.Reconciled && _requestContext.HasPermission(CustomClaims.TransactionReconcile))
             {
                 txn.Reconciled = true;
                 txn.ReconciledById = _requestContext.UserId;
@@ -53,9 +54,19 @@ namespace SAP.Services
         {
             var txn = await _dbContext.Transactions.FindAsync(id);
 
-            _dbContext.Transactions.Remove(txn);
+            if (txn.Reconciled)
+                throw new SapException("ERR_CANT_DELETE_RECONCILED_TXN");
 
-            await _dbContext.SaveChangesAsync();
+            if (_requestContext.HasPermission(CustomClaims.TransactionDelete) || _requestContext.UserId == txn.CreatedBy)
+            {
+                _dbContext.Transactions.Remove(txn);
+
+                await _dbContext.SaveChangesAsync();
+            }
+            else
+            {
+                throw new SapException("ERR_INSUFFICIENT_PERMISSION_TO_DELETE_TRNASACTION");
+            }
         }
 
         public async Task<TransactionDto> GetAsync(string id)
@@ -84,7 +95,7 @@ namespace SAP.Services
         public async Task ReconcileAsync(string id)
         {
             var txn = await _dbContext.Transactions.FindAsync(id);
-
+            
             txn.Reconciled = true;
             txn.ReconciledById = _requestContext.UserId;            
 
@@ -145,14 +156,15 @@ namespace SAP.Services
         {
             var txn = await _dbContext.Transactions.FindAsync(id);
 
+            if (txn.Reconciled)
+                throw new SapException("ERR_CANT_UPDATE_RECONCILED_TXN");
+
             txn.Amount = dto.Category == TransactionCategory.Expense ? Math.Abs(dto.Amount) * -1 : Math.Abs(dto.Amount);
             txn.Description = dto.Description;
             txn.Category = dto.Category;
             txn.TypeId = dto.TypeId;
             txn.Date = dto.Date;
             txn.ProjectId = dto.ProjectId;
-            txn.Reconciled = false;
-            txn.ReconciledById = null;
 
             await _dbContext.SaveChangesAsync();
         }

@@ -105,7 +105,7 @@ namespace SAP.Tests.Helpers
                 Amount = amount,
                 ProjectId = projectId,
                 Reconciled = reconciled,
-                ReconciledById = reconciledById
+                ReconciledById = reconciledById,
             };
             return txn;
         }

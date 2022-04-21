@@ -326,7 +326,7 @@ namespace SAP.Tests
 
                       var ex = await Assert.ThrowsAsync<SapException>(() => service.UpdateAsync("lk-21", dto));
 
-                      Assert.Equal("ERR_PROTECTED_LOOKUP_MODIFICATION", ex.Message);
+                      Assert.Equal("ERR_CANT_UPDATE_PROTECTED_LOOKUP", ex.Message);
                   });
             }
         }
@@ -369,7 +369,7 @@ namespace SAP.Tests
 
                       var ex = await Assert.ThrowsAsync<SapException>(() =>service.DeleteAsync("lk-21"));
 
-                      Assert.Equal("ERR_PROTECTED_LOOKUP_DELETION", ex.Message);
+                      Assert.Equal("ERR_CANT_DELETE_PROTECTED_LOOKUP", ex.Message);
                   });
             }
         }

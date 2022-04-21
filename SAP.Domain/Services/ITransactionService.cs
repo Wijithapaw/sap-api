@@ -8,7 +8,7 @@ namespace SAP.Domain.Services
 {
     public interface ITransactionService
     {
-        Task<string> CreateAsync(TransactionDto transaction, bool autoReconcile = false);
+        Task<string> CreateAsync(TransactionDto transaction);
         Task UpdateAsync(string id, TransactionDto transaction);
         Task DeleteAsync(string id);
         Task<List<TransactionDto>> SearchAsync(TransactionSearchDto filter);

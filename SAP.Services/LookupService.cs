@@ -43,7 +43,7 @@ namespace SAP.Services
             var lookup = await _dbContext.Lookups.FindAsync(id);
 
             if (lookup.Protected)
-                throw new SapException("ERR_PROTECTED_LOOKUP_DELETION");
+                throw new SapException("ERR_CANT_DELETE_PROTECTED_LOOKUP");
 
             _dbContext.Lookups.Remove(lookup);
 
@@ -108,7 +108,7 @@ namespace SAP.Services
             var lookup = await _dbContext.Lookups.FindAsync(id);
 
             if (lookup.Protected)
-                throw new SapException("ERR_PROTECTED_LOOKUP_MODIFICATION");
+                throw new SapException("ERR_CANT_UPDATE_PROTECTED_LOOKUP");
 
             lookup.Code = dto.Code;
             lookup.Name = dto.Name;
