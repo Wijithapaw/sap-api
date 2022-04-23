@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SAP.Domain;
 using SAP.Domain.Dtos;
 using SAP.Domain.Entities;
@@ -51,6 +52,18 @@ namespace SAP.Data
             builder.Entity<Lookup>().HasIndex(e => new { e.HeaderId, e.Code }).IsUnique();
             builder.Entity<Tag>().HasIndex(e => e.Name).IsUnique();
             builder.Entity<ProjectTag>().HasIndex(e => new { e.ProjectId, e.TagId }).IsUnique();
+
+            //Set the kind of Datetime object's to UTC for UTC dates
+            var dateTimeConverter = new ValueConverter<DateTime, DateTime>(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
+            foreach (var entityType in builder.Model.GetEntityTypes())
+            {
+                foreach (var property in entityType.GetProperties())
+                {
+                    if ((property.ClrType == typeof(DateTime) || property.ClrType == typeof(DateTime?))
+                        && property.Name.ToLower().EndsWith("utc"))
+                        property.SetValueConverter(dateTimeConverter);
+                }
+            }
         }
 
         //Entities
@@ -67,35 +80,35 @@ namespace SAP.Data
             {
                 foreach (var entry in ChangeTracker.Entries<IAuditedEntity>().Where(e => e.State == EntityState.Added))
                 {
-                    entry.Entity.CreatedBy = entry.Entity.LastUpdatedBy = _requestContext.UserId;
+                    entry.Entity.CreatedById = entry.Entity.LastUpdatedById = _requestContext.UserId;
                     entry.Entity.CreatedDateUtc = entry.Entity.LastUpdatedDateUtc = DateTime.UtcNow;
                 }
 
                 foreach (var entry in ChangeTracker.Entries<IAuditedEntity>().Where(e => e.State == EntityState.Modified))
                 {
-                    entry.Entity.LastUpdatedBy = _requestContext.UserId;
+                    entry.Entity.LastUpdatedById = _requestContext.UserId;
                     entry.Entity.LastUpdatedDateUtc = DateTime.UtcNow;
                 }
             }
             return base.SaveChanges();
         }
 
-        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
+        public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken), bool preventAuditData = false)
         {
-            if (_requestContext != null)
+            if (_requestContext != null && !preventAuditData)
             {
                 foreach (var entry in ChangeTracker.Entries<IAuditedEntity>().Where(e => e.State == EntityState.Added))
                 {
-                    entry.Entity.CreatedBy = entry.Entity.LastUpdatedBy = _requestContext.UserId;
+                    entry.Entity.CreatedById = entry.Entity.LastUpdatedById = _requestContext.UserId;
                     entry.Entity.CreatedDateUtc = entry.Entity.LastUpdatedDateUtc = DateTime.UtcNow;
                 }
 
                 foreach (var entry in ChangeTracker.Entries<IAuditedEntity>().Where(e => e.State == EntityState.Modified))
                 {
-                    entry.Entity.LastUpdatedBy = _requestContext.UserId;
+                    entry.Entity.LastUpdatedById = _requestContext.UserId;
                     entry.Entity.LastUpdatedDateUtc = DateTime.UtcNow;
-                }            
-            }           
+                }
+            }
             return base.SaveChangesAsync(cancellationToken);
         }
     }

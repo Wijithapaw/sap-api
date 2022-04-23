@@ -20,5 +20,9 @@ namespace SAP.Domain.Dtos
         public bool Reconciled { get; set; }
         public string ReconciledById { get; set; }
         public string ReconciledBy { get; set; }
+        public string CreatedBy { get; set; }
+        public string LastUpdatedBy { get; set; }
+        public DateTime CreatedDateUtc { get; set; }
+        public DateTime LastUpdatedDateUtc { get; set; }
     }
 }

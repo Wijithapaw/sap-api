@@ -22,8 +22,10 @@ namespace SAP.Domain.Entities
         public bool Reconciled { get; set; }
         public string ReconciledById { get; set; }
 
-        public virtual Project Project { get; set; }
-        public virtual User ReconciledBy { get; set; }
+        public virtual Project Project { get; set; }        
         public virtual Lookup Type { get; set; }
+        public virtual User ReconciledBy { get; set; }
+        public virtual User CreatedBy { get; set; }
+        public virtual User LastUpdatedBy { get; set; }
     }
 }

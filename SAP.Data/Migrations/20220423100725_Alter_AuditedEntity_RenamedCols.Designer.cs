@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SAP.Data;
@@ -9,9 +10,10 @@ using SAP.Data;
 namespace SAP.Data.Migrations
 {
     [DbContext(typeof(SapDbContext))]
-    partial class SapDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220423100725_Alter_AuditedEntity_RenamedCols")]
+    partial class Alter_AuditedEntity_RenamedCols
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -393,10 +395,6 @@ namespace SAP.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("LastUpdatedById");
-
                     b.HasIndex("ProjectId");
 
                     b.HasIndex("ReconciledById");
@@ -569,14 +567,6 @@ namespace SAP.Data.Migrations
 
             modelBuilder.Entity("SAP.Domain.Entities.Transaction", b =>
                 {
-                    b.HasOne("SAP.Domain.Entities.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
-                    b.HasOne("SAP.Domain.Entities.User", "LastUpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("LastUpdatedById");
-
                     b.HasOne("SAP.Domain.Entities.Project", "Project")
                         .WithMany("Transactions")
                         .HasForeignKey("ProjectId")

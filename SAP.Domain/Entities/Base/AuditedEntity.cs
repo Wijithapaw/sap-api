@@ -6,9 +6,9 @@ namespace SAP.Domain.Entities.Base
 {
     public class AuditedEntity : IAuditedEntity
     {
-        public string CreatedBy { get; set; }
+        public string CreatedById { get; set; }
         public DateTime CreatedDateUtc { get; set; }
-        public string LastUpdatedBy { get; set; }
+        public string LastUpdatedById { get; set; }
         public DateTime LastUpdatedDateUtc { get; set; }
     }
 }

@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SAP.Services
@@ -57,7 +58,7 @@ namespace SAP.Services
             if (txn.Reconciled)
                 throw new SapException("ERR_CANT_DELETE_RECONCILED_TXN");
 
-            if (_requestContext.HasPermission(CustomClaims.TransactionDelete) || _requestContext.UserId == txn.CreatedBy)
+            if (_requestContext.HasPermission(CustomClaims.TransactionDelete) || _requestContext.UserId == txn.CreatedById)
             {
                 _dbContext.Transactions.Remove(txn);
 
@@ -86,7 +87,11 @@ namespace SAP.Services
                     ProjectId = t.ProjectId,
                     Reconciled = t.Reconciled,
                     ReconciledById = t.ReconciledById,
-                    ReconciledBy = $"{t.ReconciledBy.FirstName} {t.ReconciledBy.LastName}" 
+                    ReconciledBy = $"{t.ReconciledBy.FirstName} {t.ReconciledBy.LastName}",
+                    CreatedBy = $"{t.CreatedBy.FirstName} {t.CreatedBy.LastName}",
+                    LastUpdatedBy = $"{t.LastUpdatedBy.FirstName} {t.LastUpdatedBy.LastName}",
+                    CreatedDateUtc = t.CreatedDateUtc,
+                    LastUpdatedDateUtc = t.LastUpdatedDateUtc,
                 }).FirstOrDefaultAsync();
 
             return txn;
@@ -97,9 +102,9 @@ namespace SAP.Services
             var txn = await _dbContext.Transactions.FindAsync(id);
             
             txn.Reconciled = true;
-            txn.ReconciledById = _requestContext.UserId;            
+            txn.ReconciledById = _requestContext.UserId;
 
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync(default(CancellationToken), true);
         }
 
         public async Task<List<TransactionDto>> SearchAsync(TransactionSearchDto filter)
@@ -149,7 +154,7 @@ namespace SAP.Services
             txn.Reconciled = false;
             txn.ReconciledById = null;
 
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync(default(CancellationToken), true);
         }
 
         public async Task UpdateAsync(string id, TransactionDto dto)
