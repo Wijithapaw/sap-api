@@ -88,6 +88,7 @@ namespace SAP.Services
                     Reconciled = t.Reconciled,
                     ReconciledById = t.ReconciledById,
                     ReconciledBy = $"{t.ReconciledBy.FirstName} {t.ReconciledBy.LastName}",
+                    ReconciledDateUtc = t.ReconciledDateUtc,
                     CreatedBy = $"{t.CreatedBy.FirstName} {t.CreatedBy.LastName}",
                     LastUpdatedBy = $"{t.LastUpdatedBy.FirstName} {t.LastUpdatedBy.LastName}",
                     CreatedDateUtc = t.CreatedDateUtc,
@@ -103,6 +104,7 @@ namespace SAP.Services
             
             txn.Reconciled = true;
             txn.ReconciledById = _requestContext.UserId;
+            txn.ReconciledDateUtc = DateTime.UtcNow;
 
             await _dbContext.SaveChangesAsync(default(CancellationToken), true);
         }
@@ -158,6 +160,7 @@ namespace SAP.Services
 
             txn.Reconciled = false;
             txn.ReconciledById = null;
+            txn.ReconciledDateUtc = null;
 
             await _dbContext.SaveChangesAsync(default(CancellationToken), true);
         }

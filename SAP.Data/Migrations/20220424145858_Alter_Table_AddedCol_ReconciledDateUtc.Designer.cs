@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SAP.Data;
@@ -9,9 +10,10 @@ using SAP.Data;
 namespace SAP.Data.Migrations
 {
     [DbContext(typeof(SapDbContext))]
-    partial class SapDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220424145858_Alter_Table_AddedCol_ReconciledDateUtc")]
+    partial class Alter_Table_AddedCol_ReconciledDateUtc
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -387,7 +389,7 @@ namespace SAP.Data.Migrations
                     b.Property<string>("ReconciledById")
                         .HasColumnType("text");
 
-                    b.Property<DateTime?>("ReconciledDateUtc")
+                    b.Property<DateTime>("ReconciledDateUtc")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("TypeId")

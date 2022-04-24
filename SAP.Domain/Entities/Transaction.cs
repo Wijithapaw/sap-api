@@ -21,6 +21,7 @@ namespace SAP.Domain.Entities
         public double Amount { get; set; }
         public bool Reconciled { get; set; }
         public string ReconciledById { get; set; }
+        public DateTime? ReconciledDateUtc { get; set; }
 
         public virtual Project Project { get; set; }        
         public virtual Lookup Type { get; set; }
