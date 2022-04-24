@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using SAP.Domain.Dtos;
+using SAP.Domain.Exceptions;
 using System;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace SAP.Api.Middlewares
@@ -16,8 +18,8 @@ namespace SAP.Api.Middlewares
             _next = next;
         }
 
-        public async Task InvokeAsync(HttpContext context, 
-            IRequestContext requestContext, 
+        public async Task InvokeAsync(HttpContext context,
+            IRequestContext requestContext,
             ILogger<ErrorLoggingMiddleware> logger)
         {
             try
@@ -26,7 +28,26 @@ namespace SAP.Api.Middlewares
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, $"Unhandled Error. UserId: { requestContext.UserId}");
+                var errorMessage = "";
+                var responseStatus = HttpStatusCode.InternalServerError;
+                if (ex is SapException)
+                {
+                    logger.LogWarning(ex, $"Bad Request. UserId: { requestContext.UserId}");
+                    errorMessage = ex.Message;
+                    responseStatus = HttpStatusCode.BadRequest;
+                }
+                else
+                {
+                    logger.LogError(ex, $"Unhandled Error. UserId: { requestContext.UserId}");
+                }
+
+                if (string.IsNullOrEmpty(errorMessage))
+                    errorMessage = "ERR_UNKNOWN_ERROR";
+
+                context.Response.ContentType = "application/json";
+                context.Response.StatusCode = (int)responseStatus;
+                await context.Response.WriteAsync(errorMessage);
+                return;
             }
         }
     }
