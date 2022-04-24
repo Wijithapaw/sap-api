@@ -107,34 +107,7 @@ namespace SAP.Services
             await _dbContext.SaveChangesAsync(default(CancellationToken), true);
         }
 
-        public async Task<List<TransactionDto>> SearchAsync(TransactionSearchDto filter)
-        {
-            var query = TransactionSearch(filter);
-
-            var txns = await query.OrderByDescending(tr => tr.Date)
-                .ThenByDescending(tr => tr.CreatedDateUtc)
-                .Select(t => new TransactionDto
-                {
-                    Id = t.Id,
-                    Amount = t.Amount,
-                    Description = t.Description,
-                    Date = t.Date,
-                    Category = t.Category,
-                    TypeId = t.TypeId,
-                    Type = t.Type.Name,
-                    TypeCode = t.Type.Code,
-                    ProjectId = t.ProjectId,
-                    ProjectName = t.Project.Name,
-                    Reconciled = t.Reconciled,
-                    ReconciledById = t.ReconciledById,
-                    ReconciledBy = $"{t.ReconciledBy.FirstName} {t.ReconciledBy.LastName}"
-                })
-                .ToListAsync();
-
-            return txns;
-        }
-
-        public async Task<PagedResult<TransactionDto>> SearchAsync2(TransactionSearchDto filter)
+        public async Task<PagedResult<TransactionDto>> SearchAsync(TransactionSearchDto filter)
         {
             var query = TransactionSearch(filter);
             
