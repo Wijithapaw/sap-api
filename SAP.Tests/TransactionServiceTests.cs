@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -537,9 +538,286 @@ namespace SAP.Tests
             }
         }
 
+        public class GetTransactionSummary
+        {
+            public static List<object[]> TestData => new List<object[]>
+            {
+                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), null, null, null, null, null, new string[] { }, 0, 0, 0, 0 },
+                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), "*", null, null, null, null, new string[] { }, 0, 0, 0, 0 },
+                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), "*,p-1", null, null, null, null, new string[] { "t-1", "t-2", "t-3" }, -200, 100, 0, -100 },
+                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), "p-1,p-2,p-3", null, null, null, null, new string[] { "t-1", "t-2", "t-3", "t-4", "t-5", "t-6", "t-7", "t-8", "t-9", "t-10" }, -300, 700, 0, 400  },
+                new object[] { new DateTime(2022, 2, 1), new DateTime(2022, 2, 28), "p-1, p-2, p-3", null, null, null, null, new string[] { "t-8" }, 0, 100, 0, 100 },
+                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), "p-1, p-2, p-3", TransactionCategory.Income, null, null, null, new string[] { "t-3", "t-5", "t-6", "t-7", "t-8", "t-9", "t-10" }, 0, 700, 0, 700 },
+                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), "p-1, p-2, p-3", TransactionCategory.Expense, new string[] { "lk-11", "lk-12" }, null, null, new string[] { "t-1", "t-2" }, -200, 0, 0, -200 },
+            };
+
+            [Theory]
+            [MemberData(nameof(TestData))]
+            public async Task ReturnCorrectsTransactionSummary_BasedOnTheFilters(DateTime? from,
+                DateTime? to,
+                string projects,
+                TransactionCategory? category,
+                string[] types,
+                bool? reconciled,
+                string searchTerm,               
+                string[] expectedTxnIds,
+                double expenses,
+                double income,
+                double shareDividend,
+                double profit)
+            {
+                await DbHelper.ExecuteTestAsync(
+                 async (IDbContext dbContext) =>
+                 {
+                     await SetupTestDataAsync(dbContext);
+                 },
+                 async (IDbContext dbContext) =>
+                 {
+                     var service = CreateService(dbContext);
+
+                     var filter = new TransactionSearchDto
+                     {
+                         FromDate = from,
+                         ToDate = to,
+                         Category = category,
+                         Projects = projects,
+                         CategotyTypes = types,
+                         Reconsiled = reconciled,
+                         SearchTerm = searchTerm,
+                     };
+
+                     var summary = await service.GetTransactionSummary(filter);
+
+                     Assert.Equal(expenses, summary.Expenses);
+                     Assert.Equal(income, summary.Income);
+                     Assert.Equal(shareDividend, summary.ShareDividend);
+                     Assert.Equal(profit, summary.Profit);
+                 });
+            }
+        }
+
+        public class Search2
+        {
+            public static List<object[]> TestData => new List<object[]>
+            {
+                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), null, null, null, null, null, new string[] { } },
+                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), "*", null, null, null, null, new string[] { } },
+                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), "*,p-1", null, null, null, null, new string[] { "t-1", "t-2", "t-3" } },
+                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), "p-1,p-2,p-3", null, null, null, null, new string[] { "t-1", "t-2", "t-3", "t-4", "t-5", "t-6", "t-7", "t-8", "t-9", "t-10" } },
+                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), "p-1", null, null, null, null, new string[] { "t-1", "t-2", "t-3"} },
+                new object[] { new DateTime(2022, 2, 1), new DateTime(2022, 2, 28), "p-1, p-2, p-3", null, null, null, null, new string[] { "t-8" } },
+                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), "p-1, p-2, p-3", TransactionCategory.Income, null, null, null, new string[] { "t-3", "t-5", "t-6", "t-7", "t-8", "t-9", "t-10" } },
+                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), "p-1, p-2, p-3", TransactionCategory.Expense, new string[] { "lk-11", "lk-12" }, null, null, new string[] { "t-1", "t-2" } },
+                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), "*", TransactionCategory.Expense, new string[] { }, null, null, new string[] { } },
+                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), "p-1, p-2,p-3", TransactionCategory.Expense, new string[] { "lk-11", "lk-12" }, true, null, new string[] { "t-1" } },
+                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), "p-1, p-2,p-3",TransactionCategory.Expense, new string[] { "lk-11", "lk-12" }, false, null, new string[] { "t-2" } },
+                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), "p-1, p-2,p-3",TransactionCategory.Expense, new string[] { "lk-11", "lk-12" }, null, "cement", new string[] { "t-2" } },
+                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), "p-1, p-2,p-3",null, null, null, "coconut", new string[] { "t-3", "t-4", "t-5", "t-6", "t-7", "t-8", "t-9", "t-10" } },
+                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), "p-1, p-2,p-3",null, null, null, "infra", new string[] { "t-1", "t-2", "t-3", "t-4", "t-5", "t-6", "t-7" } },
+            };
+
+            [Theory]
+            [MemberData(nameof(TestData))]
+            public async Task BasedOnFileter_ReturnsTransactions(DateTime? from,
+                DateTime? to,
+                string projects,
+                TransactionCategory? category,
+                string[] types,
+                bool? reconciled,
+                string searchTerm,
+                string[] expectedTxnIds)
+            {
+                await DbHelper.ExecuteTestAsync(
+                  async (IDbContext dbContext) =>
+                  {
+                      await SetupTestDataAsync(dbContext);
+                  },
+                  async (IDbContext dbContext) =>
+                  {
+                      var service = CreateService(dbContext);
+
+                      var filter = new TransactionSearchDto
+                      {
+                          FromDate = from,
+                          ToDate = to,
+                          Category = category,
+                          Projects = projects,
+                          CategotyTypes = types,
+                          Reconsiled = reconciled,
+                          SearchTerm = searchTerm,
+                          Page = 1,
+                          PageSize = 50
+                      };
+
+                      var results = await service.SearchAsync2(filter);
+
+                      var txnIds = results.Items.Select(r => r.Id).OrderBy(id => id).ToArray();
+
+                      Assert.Equal(expectedTxnIds.OrderBy(id => id), txnIds);
+                  });
+            }
+
+
+            public static List<object[]> TestData2 => new List<object[]>
+            {
+                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), "*", null, null, null, null, new string[] { "t-1", "t-2", "t-3", "t-4", "t-5", "t-6", "t-7", "t-8", "t-9", "t-10" } },
+                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), "*,p-1", null, null, null, null, new string[] { "t-1", "t-2", "t-3", "t-4", "t-5", "t-6", "t-7", "t-8", "t-9", "t-10" } },
+                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), "*", TransactionCategory.Expense, new string[] { "lk-11", "lk-12" }, null, null, new string[] { "t-1", "t-2" } },
+                new object[] { null, new DateTime(2022, 1, 31), "*", null, null, null, null, new string[] { "t-1", "t-2", "t-3", "t-4", "t-5", "t-6", "t-7" } },
+                new object[] { new DateTime(2022, 2, 1), null, "*", null, null, null, null, new string[] { "t-8", "t-9", "t-10" } },
+            };
+
+            [Theory]
+            [MemberData(nameof(TestData2))]
+            public async Task WhenThereIsAllProjectAccess_ReturnsTransactionsBasedOnDateFilter(DateTime? from,
+                DateTime? to,
+                string projects,
+                TransactionCategory? category,
+                string[] types,
+                bool? reconciled,
+                string searchTerm,
+                string[] expectedTxnIds)
+            {
+                await DbHelper.ExecuteTestAsync(
+                  async (IDbContext dbContext) =>
+                  {
+                      await SetupTestDataAsync(dbContext);
+                  },
+                  async (IDbContext dbContext) =>
+                  {
+                      var requestContext = DbHelper.GetRequestContext();
+
+                      requestContext.UserId = "u-1";
+                      requestContext.PermissionClaims = new string[] { CustomClaims.ProjectsFullAccess };
+
+                      var service = CreateService(dbContext, requestContext);
+
+                      var filter = new TransactionSearchDto
+                      {
+                          FromDate = from,
+                          ToDate = to,
+                          Category = category,
+                          Projects = projects,
+                          CategotyTypes = types,
+                          Reconsiled = reconciled,
+                          SearchTerm = searchTerm,
+                          Page = 1,
+                          PageSize = 50
+                      };
+
+                      var results = await service.SearchAsync2(filter);
+
+                      var txnIds = results.Items.Select(r => r.Id).OrderBy(id => id).ToArray();
+
+                      Assert.Equal(expectedTxnIds.OrderBy(id => id), txnIds);
+                  });
+            }
+
+            [Fact]
+            public async Task BasedOnFileter_ReturnsTransactionsWithCorrectData()
+            {
+                await DbHelper.ExecuteTestAsync(
+                  async (IDbContext dbContext) =>
+                  {
+                      await SetupTestDataAsync(dbContext);
+                  },
+                  async (IDbContext dbContext) =>
+                  {
+                      var service = CreateService(dbContext);
+
+                      var filter = new TransactionSearchDto
+                      {
+                          FromDate = new DateTime(2022, 1, 1),
+                          ToDate = new DateTime(2022, 4, 1),
+                          Category = null,
+                          Projects = "p-1,p-2,p-3",
+                          CategotyTypes = null,
+                          Reconsiled = null,
+                          SearchTerm = null,
+                          Page = 1,
+                          PageSize = 50
+                      };
+
+                      var results = await service.SearchAsync2(filter);
+
+                      var txn = results.Items.FirstOrDefault(tr => tr.Id == "t-1");
+
+                      Assert.NotNull(txn);
+                      Assert.Equal("t-1", txn.Id);
+                      Assert.Equal("Daily Wage", txn.Description);
+                      Assert.Equal(-100, txn.Amount);
+                      Assert.Equal("lk-11", txn.TypeId);
+                      Assert.Equal("Labour", txn.Type);
+                      Assert.Equal("Wire Fence", txn.ProjectName);
+                      Assert.Equal(TransactionCategory.Expense, txn.Category);
+                      Assert.Equal(new DateTime(2022, 1, 1), txn.Date);
+                      Assert.True(txn.Reconciled);
+                      Assert.Equal("Wijitha Wijenayake", txn.ReconciledBy);
+                  });
+            }
+
+
+            public static List<object[]> TestData3 => new List<object[]>
+            {
+                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), "p-1,p-2,p-3", null, null, null, null, 1, 10, new string[] { "t-1", "t-2", "t-3", "t-4", "t-5", "t-6", "t-7", "t-8", "t-9", "t-10" } },
+                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), "p-1,p-2,p-3", null, null, null, null, 1, 2, new string[] { "t-9", "t-10" } },
+                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), "p-1,p-2,p-3", null, null, null, null, 2, 5, new string[] { "t-1", "t-2", "t-3", "t-4", "t-5" } },
+                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), "p-1,p-2,p-3", null, null, null, null, 1, 5, new string[] { "t-6", "t-7", "t-8", "t-9", "t-10" } },
+                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), "p-1,p-2,p-3", null, null, null, null, 4, 3, new string[] { "t-1" } },
+                new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 12), "p-1,p-2,p-3", null, null, null, null, 3, 5, new string[] {  } },
+            };
+
+            [Theory]
+            [MemberData(nameof(TestData3))]
+            public async Task Returns_PagedData(DateTime? from,
+                DateTime? to,
+                string projects,
+                TransactionCategory? category,
+                string[] types,
+                bool? reconciled,
+                string searchTerm,
+                int page,
+                int pageSize,
+                string[] expectedTxnIds)
+            {
+                await DbHelper.ExecuteTestAsync(
+                  async (IDbContext dbContext) =>
+                  {
+                      await SetupTestDataAsync(dbContext);
+                  },
+                  async (IDbContext dbContext) =>
+                  {
+                      var service = CreateService(dbContext);
+
+                      var filter = new TransactionSearchDto
+                      {
+                          FromDate = from,
+                          ToDate = to,
+                          Category = category,
+                          Projects = projects,
+                          CategotyTypes = types,
+                          Reconsiled = reconciled,
+                          SearchTerm = searchTerm,
+                          Page = page,
+                          PageSize = pageSize
+                      };
+
+                      var results = await service.SearchAsync2(filter);
+
+                      var txnIds = results.Items.Select(r => r.Id).OrderBy(id => id).ToArray();
+
+                      Assert.Equal(10, results.Total);
+
+                      Assert.Equal(expectedTxnIds.OrderBy(id => id), txnIds);
+                  });
+            }
+        }
+
         private static async Task SetupTestDataAsync(IDbContext dbContext)
         {
             dbContext.Users.AddRange(TestData.Users.GetUsers());
+            await dbContext.SaveChangesAsync();
+
             dbContext.Projects.AddRange(TestData.Projects.GetProjects());
             dbContext.Tags.AddRange(TestData.Tags.GetTags());
             dbContext.ProjectTags.AddRange(TestData.Projects.GetProjectTags());

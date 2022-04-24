@@ -109,22 +109,9 @@ namespace SAP.Services
 
         public async Task<List<TransactionDto>> SearchAsync(TransactionSearchDto filter)
         {
-            var searchTerm = filter.SearchTerm?.ToLower() ?? "";
-            var projects = string.IsNullOrEmpty(filter.Projects) ? new string[] { } : filter.Projects.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(p => p.Trim());
+            var query = TransactionSearch(filter);
 
-            var hasAllProjectAccess = _requestContext.HasPermission(CustomClaims.ProjectsFullAccess);
-
-            var txns = await _dbContext.Transactions
-                .Where(t => (projects.Contains("*") && _requestContext.HasPermission(CustomClaims.ProjectsFullAccess) || projects.Contains(t.ProjectId))
-                    && (filter.FromDate == null || t.Date >= filter.FromDate)
-                    && (filter.ToDate == null || t.Date <= filter.ToDate)
-                    && (filter.Category == null || t.Category == filter.Category)
-                    && (filter.CategotyTypes == null || !filter.CategotyTypes.Any() || filter.CategotyTypes.Contains(t.TypeId))
-                    && (filter.Reconsiled == null || filter.Reconsiled == t.Reconciled)
-                    && (searchTerm == ""
-                        || t.Description.ToLower().Contains(searchTerm)
-                        || t.Project.ProjectTags.Any(pt => pt.Tag.Name.ToLower().Contains(searchTerm))))
-                .OrderByDescending(tr => tr.Date)
+            var txns = await query.OrderByDescending(tr => tr.Date)
                 .ThenByDescending(tr => tr.CreatedDateUtc)
                 .Select(t => new TransactionDto
                 {
@@ -145,6 +132,51 @@ namespace SAP.Services
                 .ToListAsync();
 
             return txns;
+        }
+
+        public async Task<PagedResult<TransactionDto>> SearchAsync2(TransactionSearchDto filter)
+        {
+            var query = TransactionSearch(filter);
+            
+            var txns = await query.OrderByDescending(tr => tr.Date)
+                .ThenByDescending(tr => tr.CreatedDateUtc)
+                .Select(t => new TransactionDto
+                {
+                    Id = t.Id,
+                    Amount = t.Amount,
+                    Description = t.Description,
+                    Date = t.Date,
+                    Category = t.Category,
+                    TypeId = t.TypeId,
+                    Type = t.Type.Name,
+                    TypeCode = t.Type.Code,
+                    ProjectId = t.ProjectId,
+                    ProjectName = t.Project.Name,
+                    Reconciled = t.Reconciled,
+                    ReconciledById = t.ReconciledById,
+                    ReconciledBy = $"{t.ReconciledBy.FirstName} {t.ReconciledBy.LastName}"
+                }).GetPagedListAsync(filter);
+
+            return txns;
+        }
+
+        public async Task<TransactionSummaryDto> GetTransactionSummary(TransactionSearchDto filter)
+        {
+            var query = TransactionSearch(filter);
+
+            var summary = (await query.Include(t => t.Type).ToListAsync())
+                .GroupBy(t => true)
+                .Select(g => new TransactionSummaryDto
+                {
+                    Expenses = g.Where(t => t.Category == TransactionCategory.Expense).Sum(t => t.Amount),
+                    Income = g.Where(t => t.Category == TransactionCategory.Income).Sum(t => t.Amount),
+                    ShareDividend = g.Where(t => t.Category == TransactionCategory.Expense && t.Type.Code == "SHARE_DIVIDEND").Sum(t => t.Amount)
+                }).FirstOrDefault() ?? new TransactionSummaryDto();
+
+            summary.Profit = summary.Income + summary.Expenses;
+            summary.Expenses -= summary.ShareDividend;
+
+            return summary;
         }
 
         public async Task UnReconcileAsync(string id)
@@ -172,6 +204,27 @@ namespace SAP.Services
             txn.ProjectId = dto.ProjectId;
 
             await _dbContext.SaveChangesAsync();
+        }
+
+        private IQueryable<Transaction> TransactionSearch(TransactionSearchDto filter)
+        {
+            var searchTerm = filter.SearchTerm?.ToLower() ?? "";
+            var projects = string.IsNullOrEmpty(filter.Projects) ? new string[] { } : filter.Projects.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(p => p.Trim());
+
+            var hasAllProjectAccess = _requestContext.HasPermission(CustomClaims.ProjectsFullAccess);
+
+            var txns = _dbContext.Transactions
+                .Where(t => (projects.Contains("*") && _requestContext.HasPermission(CustomClaims.ProjectsFullAccess) || projects.Contains(t.ProjectId))
+                    && (filter.FromDate == null || t.Date >= filter.FromDate)
+                    && (filter.ToDate == null || t.Date <= filter.ToDate)
+                    && (filter.Category == null || t.Category == filter.Category)
+                    && (filter.CategotyTypes == null || !filter.CategotyTypes.Any() || filter.CategotyTypes.Contains(t.TypeId))
+                    && (filter.Reconsiled == null || filter.Reconsiled == t.Reconciled)
+                    && (searchTerm == ""
+                        || t.Description.ToLower().Contains(searchTerm)
+                        || t.Project.ProjectTags.Any(pt => pt.Tag.Name.ToLower().Contains(searchTerm))));
+
+            return txns;
         }
     }
 }

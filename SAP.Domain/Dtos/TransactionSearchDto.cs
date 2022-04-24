@@ -5,7 +5,7 @@ using System.Text;
 
 namespace SAP.Domain.Dtos
 {
-    public class TransactionSearchDto
+    public class TransactionSearchDto : PagedSearch
     {
         public string Projects { get; set; }
         public DateTime? FromDate { get; set; }

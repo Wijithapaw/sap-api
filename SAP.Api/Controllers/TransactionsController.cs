@@ -27,6 +27,18 @@ namespace SAP.Api.Controllers
             return await _transactionService.SearchAsync(filter);
         }
 
+        [HttpGet("Search2")]
+        public async Task<PagedResult<TransactionDto>> Get2([FromQuery] TransactionSearchDto filter)
+        {
+            return await _transactionService.SearchAsync2(filter);
+        }
+
+        [HttpGet("Summary")]
+        public async Task<TransactionSummaryDto> GetTransactionSummary([FromQuery] TransactionSearchDto filter)
+        {
+            return await _transactionService.GetTransactionSummary(filter);
+        }
+
         [HttpGet("{id}")]
         public async Task<TransactionDto> Get(string id)
         {

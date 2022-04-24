@@ -12,8 +12,10 @@ namespace SAP.Domain.Services
         Task UpdateAsync(string id, TransactionDto transaction);
         Task DeleteAsync(string id);
         Task<List<TransactionDto>> SearchAsync(TransactionSearchDto filter);
+        Task<PagedResult<TransactionDto>> SearchAsync2(TransactionSearchDto filter);
         Task<TransactionDto> GetAsync(string id);
         Task ReconcileAsync(string id);
         Task UnReconcileAsync(string id);
+        Task<TransactionSummaryDto> GetTransactionSummary(TransactionSearchDto filter);
     }
 }
