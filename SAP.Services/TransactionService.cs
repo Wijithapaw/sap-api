@@ -42,6 +42,7 @@ namespace SAP.Services
             {
                 txn.Reconciled = true;
                 txn.ReconciledById = _requestContext.UserId;
+                txn.ReconciledDateUtc = DateTime.UtcNow;
             }
 
             _dbContext.Transactions.Add(txn);
