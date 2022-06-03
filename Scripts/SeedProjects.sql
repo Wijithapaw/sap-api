@@ -1,5 +1,5 @@
 ﻿insert into "Projects" 
-("Id", "Name", "State", "StartDate", "EndDate", "CreatedBy", "CreatedDateUtc", "LastUpdatedBy", "LastUpdatedDateUtc")
+("Id", "Name", "State", "StartDate", "EndDate", "CreatedById", "CreatedDateUtc", "LastUpdatedById", "LastUpdatedDateUtc")
 values
 ('project-1', 'Wire Fence and Gate', 2, '2020-3-1', '2020-7-1', 'seed', '2022-3-14', 'seed', '2022-3-14'),
 ('project-2', 'Bridge', 2, '2020-9-1', '2020-9-10', 'seed', '2022-3-14', 'seed', '2022-3-14'),

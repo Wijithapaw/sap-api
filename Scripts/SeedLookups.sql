@@ -7,7 +7,7 @@ begin
 	select "Id" into incomeHeader from "LookupHeaders" where "Code"='INCOME_TYPES';
 		
 	insert into "Lookups" 
-	("Id", "HeaderId", "Code", "Name", "Inactive", "Protected", "CreatedBy", "CreatedDateUtc", "LastUpdatedBy", "LastUpdatedDateUtc")
+	("Id", "HeaderId", "Code", "Name", "Inactive", "Protected", "CreatedById", "CreatedDateUtc", "LastUpdatedById", "LastUpdatedDateUtc")
 	values
 	('lookup-100', expenseHeader, 'SHARE_DIVIDEND', 'Share Dividend', false, true, 'seed', '2022-3-14', 'seed', '2022-3-14'),
 	('lookup-101', expenseHeader, 'LABOUR', 'Labour', false, false, 'seed', '2022-3-14', 'seed', '2022-3-14'),
