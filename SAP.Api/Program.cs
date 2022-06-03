@@ -109,14 +109,20 @@ namespace SAP.Api
                     await roleManager.CreateAsync(analyzerRole);
 
                     //Add basic claims to roles
+                    //Admin
                     await roleManager.AddClaimAsync(adminRole, new Claim(CustomClaimTypes.SapPermission, CustomClaims.FinancialReports));
                     await roleManager.AddClaimAsync(adminRole, new Claim(CustomClaimTypes.SapPermission, CustomClaims.LookupsFullAccess));
                     await roleManager.AddClaimAsync(adminRole, new Claim(CustomClaimTypes.SapPermission, CustomClaims.ProjectsFullAccess));
                     await roleManager.AddClaimAsync(adminRole, new Claim(CustomClaimTypes.SapPermission, CustomClaims.TransactionEntry));
+                    await roleManager.AddClaimAsync(adminRole, new Claim(CustomClaimTypes.SapPermission, CustomClaims.TransactionDelete));
+                    await roleManager.AddClaimAsync(adminRole, new Claim(CustomClaimTypes.SapPermission, CustomClaims.TransactionReconcile));
+                    await roleManager.AddClaimAsync(adminRole, new Claim(CustomClaimTypes.SapPermission, CustomClaims.UsersFullAccess));
 
+                    //Project Manager
                     await roleManager.AddClaimAsync(pmRole, new Claim(CustomClaimTypes.SapPermission, CustomClaims.FinancialReports));
                     await roleManager.AddClaimAsync(pmRole, new Claim(CustomClaimTypes.SapPermission, CustomClaims.TransactionEntry));
 
+                    //Analyst
                     await roleManager.AddClaimAsync(analyzerRole, new Claim(CustomClaimTypes.SapPermission, CustomClaims.FinancialReports));
 
                     //Add Admin role to admin user
