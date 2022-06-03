@@ -117,6 +117,7 @@ namespace SAP.Api
                     await roleManager.AddClaimAsync(adminRole, new Claim(CustomClaimTypes.SapPermission, CustomClaims.TransactionDelete));
                     await roleManager.AddClaimAsync(adminRole, new Claim(CustomClaimTypes.SapPermission, CustomClaims.TransactionReconcile));
                     await roleManager.AddClaimAsync(adminRole, new Claim(CustomClaimTypes.SapPermission, CustomClaims.UsersFullAccess));
+                    await roleManager.AddClaimAsync(adminRole, new Claim(CustomClaimTypes.SapPermission, CustomClaims.AdminControl));
 
                     //Project Manager
                     await roleManager.AddClaimAsync(pmRole, new Claim(CustomClaimTypes.SapPermission, CustomClaims.FinancialReports));

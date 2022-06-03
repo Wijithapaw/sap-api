@@ -6,6 +6,7 @@ namespace SAP.Domain.Constants
 {
     public static class CustomClaims
     {
+        public const string AdminControl = "ADMIN_CONTROL";
         public const string LookupsFullAccess = "LOOKUPS_FULL_MANAGE";
         public const string ProjectsFullAccess = "PROJECTS_FULL_ACCESS";
         public const string TransactionEntry = "TRANSACTION_ENTRY";
