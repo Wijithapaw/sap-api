@@ -166,6 +166,7 @@ namespace SAP.Api
             services.AddScoped<ILookupService, LookupService>();
             services.AddScoped<ITagService, TagService>();
             services.AddScoped<ITransactionService, TransactionService>();
+            services.AddScoped<IWorkLogService, WorkLogService>();
 
             //Config Settings
             services.Configure<JwtSettings>(Configuration.GetSection("JwtSettings"));

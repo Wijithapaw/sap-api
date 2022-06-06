@@ -73,6 +73,7 @@ namespace SAP.Data
         public DbSet<Tag> Tags { get; set; }
         public DbSet<ProjectTag> ProjectTags { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
+        public DbSet<WorkLog> WorkLogs { get; set; }
 
         public override int SaveChanges()
         {

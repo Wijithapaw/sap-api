@@ -109,5 +109,19 @@ namespace SAP.Tests.Helpers
             };
             return txn;
         }
+
+        internal static WorkLog GetWorkLog(string id, string projectId, DateTime date, string labour, string jobDesc, double? wage = null)
+        {
+            var log = new WorkLog
+            {
+                Id = id,
+                ProjectId = projectId,
+                Date = date,
+                LabourName = labour,
+                JobDescription = jobDesc,
+                Wage = wage
+            };
+            return log;
+        }
     }
 }

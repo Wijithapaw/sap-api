@@ -16,6 +16,7 @@ namespace SAP.Domain
         DbSet<Tag> Tags { get; set; }
         DbSet<ProjectTag> ProjectTags { get; set; }
         DbSet<Transaction> Transactions { get; set; }
+        DbSet<WorkLog> WorkLogs { get; set; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken), bool preventAuditData = false);
     }

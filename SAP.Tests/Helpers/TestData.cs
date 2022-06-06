@@ -97,6 +97,31 @@ namespace SAP.Tests.Helpers
             }
         }
 
+        internal static class WorkLogs
+        {
+            public static WorkLog[] GetWorkLogs()
+            {
+                var logs = new WorkLog[]
+                {
+                    EntityHelper.GetWorkLog("wl-11", "p-1", new DateTime(2020, 1, 1), "James", "Digging for posts", 2000),
+                    EntityHelper.GetWorkLog("wl-12", "p-1", new DateTime(2020, 1, 2), "James", "Digging for posts", 2000),
+                    EntityHelper.GetWorkLog("wl-13", "p-1", new DateTime(2020, 1, 1), "Supun", "Digging for posts", 2000),
+                    EntityHelper.GetWorkLog("wl-14", "p-1", new DateTime(2020, 1, 1), "Kumara", "Clearing bushes"),
+
+                    EntityHelper.GetWorkLog("wl-21", "p-2", new DateTime(2020, 9, 1), "Gamini", "Bridge construction", 2500),
+                    EntityHelper.GetWorkLog("wl-22", "p-2", new DateTime(2020, 9, 2), "Kumara", "Bridge construction", 3000),
+                    EntityHelper.GetWorkLog("wl-23", "p-2", new DateTime(2020, 9, 3), "Nihal", "Bridge construction", 1900),
+                    EntityHelper.GetWorkLog("wl-24", "p-2", new DateTime(2020, 9, 4), "James", "Bridge construction", 1800),
+
+                    EntityHelper.GetWorkLog("wl-31", "p-4", new DateTime(2021, 12, 1), "Kumara", "Landscaping", 2000),
+                    EntityHelper.GetWorkLog("wl-32", "p-4", new DateTime(2021, 12, 2), "Kumara", "Weed Control", 2000),
+                    EntityHelper.GetWorkLog("wl-33", "p-4", new DateTime(2021, 12, 3), "Nihal", "Digging", 1900),
+                    EntityHelper.GetWorkLog("wl-34", "p-4", new DateTime(2021, 12, 4), "Nihal", "Planiting seeds", 1900),
+                };
+                return logs;
+            }
+        }
+
         internal static class Transactions
         {
             public static Transaction[] GetTransactions()

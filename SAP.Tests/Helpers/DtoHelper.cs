@@ -63,5 +63,19 @@ namespace SAP.Tests.Helpers
             };
             return dto;
         }
+
+        internal static WorkLogDto GetWorkLogDto(string id, string projectId, DateTime date, string labour, string jobDesc, double? wage = null)
+        {
+            var log = new WorkLogDto
+            {
+                Id = id,
+                ProjectId = projectId,
+                Date = date,
+                LabourName = labour,
+                JobDescription = jobDesc,
+                Wage = wage
+            };
+            return log;
+        }
     }
 }
