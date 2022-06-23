@@ -37,14 +37,14 @@ namespace SAP.Api.Controllers
             await _workLogService.UpdateAsync(id, value);
         }
 
-        [HttpPost("{id}")]
+        [HttpPost]
         public async Task<string> Create(WorkLogDto value)
         {
             return await _workLogService.CreateAsync(value);
         }
 
         [HttpDelete("{id}")]
-        public async void Delete(string id)
+        public async Task Delete(string id)
         {
             await _workLogService.DeleteAsync(id);
         }

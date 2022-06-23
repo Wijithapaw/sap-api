@@ -45,9 +45,8 @@ namespace SAP.Services
             if (log != null)
             {
                 _dbContext.WorkLogs.Remove(log);
+                await _dbContext.SaveChangesAsync();
             }
-
-            await _dbContext.SaveChangesAsync();
         }
 
         public async Task<WorkLogDto> GetAsync(string id)
@@ -78,6 +77,8 @@ namespace SAP.Services
                     && (filter.From == null || l.Date >= filter.From)
                     && (filter.To == null || l.Date <= filter.To)
                     && (searchTerm == "" || l.LabourName.ToLower().Contains(searchTerm) || l.JobDescription.ToLower().Contains(searchTerm)))
+                .OrderByDescending(l => l.Date)
+                .ThenByDescending(l => l.CreatedDateUtc)
                 .Select(l => new WorkLogDto
                 {
                     Id = l.Id,
