@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Moq;
 using SAP.Domain;
 using SAP.Domain.Dtos;
+using SAP.Domain.Services;
 using SAP.Services;
 using SAP.Tests.Helpers;
 using System;
@@ -228,7 +230,11 @@ namespace SAP.Tests
 
         private static WorkLogService CreateService(IDbContext dbContext)
         {
-            var service = new WorkLogService(dbContext);
+            var lookupService = new Mock<ILookupService>();
+            var transactionService = new Mock<ITransactionService>();
+
+            var service = new WorkLogService(dbContext, transactionService.Object, lookupService.Object);
+
             return service;
         }
     }

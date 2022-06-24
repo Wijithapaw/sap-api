@@ -17,7 +17,9 @@ namespace SAP.Domain.Entities
         public string JobDescription { get; set; }
         public DateTime Date { get; set; }
         public double? Wage { get; set; }
+        public string TransactionId { get; set; }
 
         public virtual Project Project { get; set; }
+        public virtual Transaction Transaction { get; set; }
     }
 }

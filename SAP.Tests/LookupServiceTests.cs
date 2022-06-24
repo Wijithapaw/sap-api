@@ -374,6 +374,45 @@ namespace SAP.Tests
             }
         }
 
+        public class GetLookupId
+        {
+            [Fact]
+            public async Task WhenExists_ReturnsId()
+            {
+                await DbHelper.ExecuteTestAsync(
+                  async (IDbContext dbContext) =>
+                  {
+                      await SetupTestDataAsync(dbContext);
+                  },
+                  async (IDbContext dbContext) =>
+                  {
+                      var service = CreateService(dbContext);
+
+                      var id = await service.GetLookupIdAsync("EXPENSE_TYPES", "LABOUR");
+
+                      Assert.Equal("lk-11", id);                      
+                  });
+            }
+
+            [Fact]
+            public async Task WhenNotExists_ReturnsId()
+            {
+                await DbHelper.ExecuteTestAsync(
+                  async (IDbContext dbContext) =>
+                  {
+                      await SetupTestDataAsync(dbContext);
+                  },
+                  async (IDbContext dbContext) =>
+                  {
+                      var service = CreateService(dbContext);
+
+                      var id = await service.GetLookupIdAsync("EXPENSE_TYPES", "LABOUR_InValid");
+
+                      Assert.Null(id);
+                  });
+            }
+        }
+
         private static async Task SetupTestDataAsync(IDbContext dbContext)
         {
             dbContext.LookupHeaders.AddRange(TestData.Lookups.GetLookupHeaders());

@@ -13,5 +13,6 @@ namespace SAP.Domain.Dtos
         public string JobDescription { get; set; }
         public DateTime Date { get; set; }
         public double? Wage { get; set; }
+        public bool CreateWageTxn { get; set; }
     }
 }

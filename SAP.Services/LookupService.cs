@@ -103,6 +103,16 @@ namespace SAP.Services
             return lookups;
         }
 
+        public async Task<string> GetLookupIdAsync(string headerCode, string code)
+        {
+            var id = await _dbContext.Lookups
+               .Where(l => l.Header.Code == headerCode && l.Code == code)
+               .Select(l => l.Id)
+               .FirstOrDefaultAsync();
+
+            return id;
+        }
+
         public async Task UpdateAsync(string id, LookupDto dto)
         {
             var lookup = await _dbContext.Lookups.FindAsync(id);

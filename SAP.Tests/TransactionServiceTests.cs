@@ -441,7 +441,7 @@ namespace SAP.Tests
             }
         }
 
-        public class Search2
+        public class Search
         {
             public static List<object[]> TestData => new List<object[]>
             {

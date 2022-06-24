@@ -2,6 +2,8 @@
 using SAP.Domain;
 using SAP.Domain.Dtos;
 using SAP.Domain.Entities;
+using SAP.Domain.Enums;
+using SAP.Domain.Exceptions;
 using SAP.Domain.Services;
 using System;
 using System.Collections.Generic;
@@ -14,10 +16,16 @@ namespace SAP.Services
     public class WorkLogService : IWorkLogService
     {
         private readonly IDbContext _dbContext;
+        private readonly ITransactionService _transactionService;
+        private readonly ILookupService _lookupService;
 
-        public WorkLogService(IDbContext dbContext)
+        public WorkLogService(IDbContext dbContext, 
+            ITransactionService transactionService,
+            ILookupService lookupService)
         {
             _dbContext = dbContext;
+            _transactionService = transactionService;
+            _lookupService = lookupService;
         }
 
         public async Task<string> CreateAsync(WorkLogDto data)
@@ -35,12 +43,34 @@ namespace SAP.Services
 
             await _dbContext.SaveChangesAsync();
 
+            if(data.CreateWageTxn && data.Wage != null)
+            {
+                var txn = new TransactionDto
+                {
+                    Amount = data.Wage.Value,
+                    Date = data.Date,
+                    Description = data.JobDescription,
+                    Category = TransactionCategory.Expense,
+                    ProjectId = data.ProjectId,
+                    TypeId = await _lookupService.GetLookupIdAsync("EXPENSE_TYPES", "LABOUR"),
+                };
+
+                var txnId = await _transactionService.CreateAsync(txn);
+
+                worklog.TransactionId = txnId;
+
+                await _dbContext.SaveChangesAsync();
+            }
+
             return worklog.Id;
         }
 
         public async Task DeleteAsync(string id)
         {
             var log = await _dbContext.WorkLogs.FindAsync(id);
+
+            if(log.TransactionId != null)
+                await _transactionService.DeleteAsync(log.TransactionId);
 
             if (log != null)
             {
@@ -99,6 +129,21 @@ namespace SAP.Services
 
             if (log != null)
             {
+                if (log.TransactionId != null)
+                {
+                    var txn = new TransactionDto
+                    {
+                        Amount = data.Wage.Value,
+                        Date = data.Date,
+                        Description = data.JobDescription,
+                        Category = TransactionCategory.Expense,
+                        ProjectId = data.ProjectId,
+                        TypeId = await _lookupService.GetLookupIdAsync("EXPENSE_TYPES", "LABOUR"),
+                    };
+
+                    await _transactionService.UpdateAsync(log.TransactionId, txn);
+                }                    
+
                 log.ProjectId = data.ProjectId;
                 log.Date = data.Date;
                 log.LabourName = data.LabourName;
