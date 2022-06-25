@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SAP.Domain.Dtos
 {
@@ -14,5 +12,6 @@ namespace SAP.Domain.Dtos
         public DateTime Date { get; set; }
         public double? Wage { get; set; }
         public bool CreateWageTxn { get; set; }
+        public bool? WageTxnReconciled { get; set; }
     }
 }
