@@ -92,7 +92,8 @@ namespace SAP.Services
                     ProjectId = l.ProjectId,
                     ProjectName = l.Project.Name,
                     Wage = l.Wage,
-                    WageTxnReconciled = l.TransactionId != null ? (bool?)l.Transaction.Reconciled : null
+                    WageTxnReconciled = l.TransactionId != null ? (bool?)l.Transaction.Reconciled : null,
+                    WageTxnId = l.TransactionId
                 }).FirstOrDefaultAsync();
 
             return log;
@@ -119,7 +120,8 @@ namespace SAP.Services
                     ProjectId = l.ProjectId,
                     ProjectName = l.Project.Name,
                     Wage = l.Wage,
-                    WageTxnReconciled = l.TransactionId != null ? (bool?)l.Transaction.Reconciled : null
+                    WageTxnReconciled = l.TransactionId != null ? (bool?)l.Transaction.Reconciled : null,
+                    WageTxnId = l.TransactionId
                 }).GetPagedListAsync(filter);
 
             return logs;

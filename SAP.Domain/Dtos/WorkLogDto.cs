@@ -13,5 +13,6 @@ namespace SAP.Domain.Dtos
         public double? Wage { get; set; }
         public bool CreateWageTxn { get; set; }
         public bool? WageTxnReconciled { get; set; }
+        public string WageTxnId { get; set; }
     }
 }
