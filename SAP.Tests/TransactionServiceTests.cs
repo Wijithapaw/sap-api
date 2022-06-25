@@ -657,7 +657,7 @@ namespace SAP.Tests
                   });
             }
         }
-
+              
         private static async Task SetupTestDataAsync(IDbContext dbContext)
         {
             dbContext.Users.AddRange(TestData.Users.GetUsers());

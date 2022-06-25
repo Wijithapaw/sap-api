@@ -16,5 +16,6 @@ namespace SAP.Domain.Services
         Task UpdateAsync(string id, LookupDto lookup);
         Task DeleteAsync(string id);
         Task<string> GetLookupIdAsync(string headerCode, string code);
+        Task<LookupHeaderDto> GetHeaderByCodeAsync(string headerCode);
     }
 }

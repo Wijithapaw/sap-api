@@ -47,6 +47,13 @@ namespace SAP.Api.Controllers
             return await _lookupService.GetAsync(id);
         }
 
+        [HttpGet("Header/ByCode/{code}")]
+        [ClaimAuthorize(CustomClaims.LookupsFullAccess)]
+        public async Task<LookupHeaderDto> GetHeader(string code)
+        {
+            return await _lookupService.GetHeaderByCodeAsync(code);
+        }
+
         [HttpPost]
         [ClaimAuthorize(CustomClaims.LookupsFullAccess)]
         public async Task<string> Create([FromBody] LookupDto lookup)

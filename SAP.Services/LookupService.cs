@@ -92,6 +92,20 @@ namespace SAP.Services
             return lookups;
         }
 
+        public async Task<LookupHeaderDto> GetHeaderByCodeAsync(string headerCode)
+        {
+            var lookups = await _dbContext.LookupHeaders
+                .Where(l => l.Code == headerCode)
+                .Select(l => new LookupHeaderDto
+                {
+                    Id = l.Id,
+                    Code = l.Code,
+                    Name = l.Name,
+                }).FirstOrDefaultAsync();
+
+            return lookups;
+        }
+
         public async Task<List<ListItemDto>> GetActiveLookupsAsListItemseAsync(string headerCode)
         {
             var lookups = await _dbContext.Lookups

@@ -413,6 +413,31 @@ namespace SAP.Tests
             }
         }
 
+        public class GetHeaderByCode
+        {
+            [Fact]
+            public async Task WhenExists_ReturnsCorrectData()
+            {
+                await DbHelper.ExecuteTestAsync(
+                  async (IDbContext dbContext) =>
+                  {
+                      await SetupTestDataAsync(dbContext);
+                  },
+                  async (IDbContext dbContext) =>
+                  {
+                      var service = CreateService(dbContext);
+
+                      var header = await service.GetHeaderByCodeAsync("EXPENSE_TYPES");
+
+                      Assert.NotNull(header);
+                      Assert.Equal("h-1", header.Id);
+                      Assert.Equal("EXPENSE_TYPES", header.Code);
+                      Assert.Equal("Expense Types", header.Name);
+                  });
+            }
+        }
+
+
         private static async Task SetupTestDataAsync(IDbContext dbContext)
         {
             dbContext.LookupHeaders.AddRange(TestData.Lookups.GetLookupHeaders());
