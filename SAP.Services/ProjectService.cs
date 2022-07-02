@@ -78,6 +78,7 @@ namespace SAP.Services
         public async Task<List<ProjectDto>> SearchAsync(string searchTerm = null, bool activeOnly = false)
         {
             var projects = await SearchQuery(searchTerm, activeOnly)
+                .OrderBy(p => p.Name)
                 .Select(p => new ProjectDto
                 {
                     Id = p.Id,

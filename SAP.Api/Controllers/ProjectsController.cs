@@ -48,21 +48,21 @@ namespace SAP.Api.Controllers
 
         [HttpPut("{id}")]
         [ClaimAuthorize(CustomClaims.ProjectsFullAccess)]
-        public async void Put(string id, [FromBody] ProjectDto value)
+        public async Task Put(string id, [FromBody] ProjectDto value)
         {
             await _projectService.UpdateAsync(id, value);
         }
 
         [HttpDelete("{id}")]
         [ClaimAuthorize(CustomClaims.ProjectsFullAccess)]
-        public async void Delete(string id)
+        public async Task Delete(string id)
         {
             await _projectService.DeleteAsync(id);
         }
 
         [HttpPost("Tag/{projectId}")]
         [ClaimAuthorize(CustomClaims.ProjectsFullAccess)]
-        public async void AddTag(string projectId, ListItemDto tag)
+        public async Task AddTag(string projectId, ListItemDto tag)
         {
             await _projectService.AddTagAsync(projectId, tag);
         }

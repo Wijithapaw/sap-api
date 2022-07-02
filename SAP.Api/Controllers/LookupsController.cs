@@ -70,7 +70,7 @@ namespace SAP.Api.Controllers
 
         [HttpDelete("{id}")]
         [ClaimAuthorize(CustomClaims.LookupsFullAccess)]
-        public async void Delete(string id)
+        public async Task Delete(string id)
         {
             await _lookupService.DeleteAsync(id);
         }
