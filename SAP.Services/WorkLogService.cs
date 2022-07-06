@@ -49,7 +49,7 @@ namespace SAP.Services
                 {
                     Amount = data.Wage.Value,
                     Date = data.Date,
-                    Description = data.JobDescription,
+                    Description = $"{data.LabourName}-{data.JobDescription}",
                     Category = TransactionCategory.Expense,
                     ProjectId = data.ProjectId,
                     TypeId = await _lookupService.GetLookupIdAsync("EXPENSE_TYPES", "LABOUR"),
@@ -139,7 +139,7 @@ namespace SAP.Services
                     {
                         Amount = data.Wage.Value,
                         Date = data.Date,
-                        Description = data.JobDescription,
+                        Description = $"{data.LabourName}-{data.JobDescription}",
                         Category = TransactionCategory.Expense,
                         ProjectId = data.ProjectId,
                         TypeId = await _lookupService.GetLookupIdAsync("EXPENSE_TYPES", "LABOUR"),

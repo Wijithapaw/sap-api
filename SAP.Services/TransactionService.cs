@@ -86,6 +86,7 @@ namespace SAP.Services
                     Type = t.Type.Name,
                     TypeCode = t.Type.Code,
                     ProjectId = t.ProjectId,
+                    ProjectName = t.Project.Name,
                     Reconciled = t.Reconciled,
                     ReconciledById = t.ReconciledById,
                     ReconciledBy = $"{t.ReconciledBy.FirstName} {t.ReconciledBy.LastName}",
