@@ -95,11 +95,14 @@ namespace SAP.Services
 
         public async Task<List<ListItemDto>> GetProjectsListItemsAsync(string searchTerm = null)
         {
+            var activeStates = new ProjectState[] { ProjectState.Pending, ProjectState.Inprogress };
+
             var projects = await SearchQuery(searchTerm, false)
                 .Select(p => new ListItemDto
                 {
                     Key = p.Id,
-                    Value = p.Name
+                    Value = p.Name,
+                    Inactive = !activeStates.Contains(p.State)
                    
                 }).ToListAsync();
 

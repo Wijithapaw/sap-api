@@ -16,7 +16,15 @@ namespace SAP.Domain.Dtos
             Value = value;
         }
 
+        public ListItemDto(string key, string value, bool inactive)
+        {
+            Key = key;
+            Value = value;
+            Inactive = inactive;
+        }
+
         public string Key { get; set; }
         public string Value { get; set; }
+        public bool? Inactive { get; set; }
     }
 }
