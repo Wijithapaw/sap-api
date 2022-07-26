@@ -197,7 +197,7 @@ namespace SAP.Services
                     && (filter.ToDate == null || t.Date <= filter.ToDate)
                     && (filter.Category == null || t.Category == filter.Category)
                     && (filter.CategotyTypes == null || !filter.CategotyTypes.Any() || filter.CategotyTypes.Contains(t.TypeId))
-                    && (filter.Reconsiled == null || filter.Reconsiled == t.Reconciled)
+                    && (filter.Reconciled == null || filter.Reconciled == t.Reconciled)
                     && (searchTerm == ""
                         || t.Description.ToLower().Contains(searchTerm)
                         || t.Project.ProjectTags.Any(pt => pt.Tag.Name.ToLower().Contains(searchTerm))));

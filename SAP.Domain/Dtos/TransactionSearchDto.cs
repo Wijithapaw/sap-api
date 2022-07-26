@@ -13,6 +13,6 @@ namespace SAP.Domain.Dtos
         public string SearchTerm { get; set; }
         public TransactionCategory? Category { get; set; }
         public string[] CategotyTypes { get; set; }
-        public bool? Reconsiled { get; set; }
+        public bool? Reconciled { get; set; }
     }
 }

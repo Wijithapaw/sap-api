@@ -427,7 +427,7 @@ namespace SAP.Tests
                          Category = category,
                          Projects = projects,
                          CategotyTypes = types,
-                         Reconsiled = reconciled,
+                         Reconciled = reconciled,
                          SearchTerm = searchTerm,
                      };
 
@@ -488,7 +488,7 @@ namespace SAP.Tests
                           Category = category,
                           Projects = projects,
                           CategotyTypes = types,
-                          Reconsiled = reconciled,
+                          Reconciled = reconciled,
                           SearchTerm = searchTerm,
                           Page = 1,
                           PageSize = 50
@@ -544,7 +544,7 @@ namespace SAP.Tests
                           Category = category,
                           Projects = projects,
                           CategotyTypes = types,
-                          Reconsiled = reconciled,
+                          Reconciled = reconciled,
                           SearchTerm = searchTerm,
                           Page = 1,
                           PageSize = 50
@@ -577,7 +577,7 @@ namespace SAP.Tests
                           Category = null,
                           Projects = "p-1,p-2,p-3",
                           CategotyTypes = null,
-                          Reconsiled = null,
+                          Reconciled = null,
                           SearchTerm = null,
                           Page = 1,
                           PageSize = 50
@@ -641,7 +641,7 @@ namespace SAP.Tests
                           Category = category,
                           Projects = projects,
                           CategotyTypes = types,
-                          Reconsiled = reconciled,
+                          Reconciled = reconciled,
                           SearchTerm = searchTerm,
                           Page = page,
                           PageSize = pageSize
