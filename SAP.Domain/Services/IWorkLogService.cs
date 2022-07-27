@@ -13,5 +13,6 @@ namespace SAP.Domain.Services
         Task<WorkLogDto> GetAsync(string id);
         Task DeleteAsync(string id);
         Task<PagedResult<WorkLogDto>> SearchAsync(WorkLogSearchDto filter);
+        Task<List<string>> GetLabourNamesSuggestionsAsync(string prefix);
     }
 }

@@ -111,7 +111,7 @@ namespace SAP.Tests.Helpers
                     EntityHelper.GetWorkLog("wl-21", "p-2", new DateTime(2020, 9, 1), "Gamini", "Bridge construction", 2500),
                     EntityHelper.GetWorkLog("wl-22", "p-2", new DateTime(2020, 9, 2), "Kumara", "Bridge construction", 3000),
                     EntityHelper.GetWorkLog("wl-23", "p-2", new DateTime(2020, 9, 3), "Nihal", "Bridge construction", 1900),
-                    EntityHelper.GetWorkLog("wl-24", "p-2", new DateTime(2020, 9, 4), "James", "Bridge construction", 1800),
+                    EntityHelper.GetWorkLog("wl-24", "p-2", new DateTime(2020, 9, 4), "james", "Bridge construction", 1800),
 
                     EntityHelper.GetWorkLog("wl-31", "p-4", new DateTime(2021, 12, 1), "Kumara", "Landscaping", 2000),
                     EntityHelper.GetWorkLog("wl-32", "p-4", new DateTime(2021, 12, 2), "Kumara", "Weed Control", 2000),

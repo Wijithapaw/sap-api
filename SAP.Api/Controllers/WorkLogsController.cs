@@ -4,8 +4,6 @@ using SAP.Domain.Services;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace SAP.Api.Controllers
 {
     [Route("api/[controller]")]
@@ -29,6 +27,12 @@ namespace SAP.Api.Controllers
         public async Task<WorkLogDto> Get(string id)
         {
             return await _workLogService.GetAsync(id);
+        }
+
+        [HttpGet("Labours/{prefix}")]
+        public async Task<List<string>> GetLabourNameSuggestions(string prefix)
+        {
+            return await _workLogService.GetLabourNamesSuggestionsAsync(prefix);
         }
 
         [HttpPut("{id}")]

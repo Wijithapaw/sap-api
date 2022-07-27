@@ -157,5 +157,18 @@ namespace SAP.Services
 
             await _dbContext.SaveChangesAsync();
         }
+
+        public async Task<List<string>> GetLabourNamesSuggestionsAsync(string prefix)
+        {
+            var labourNames = await _dbContext.WorkLogs
+                    .Select(wl => wl.LabourName)
+                    .Distinct()
+                    .Where(n => n.ToLower().StartsWith(prefix.ToLower()))
+                    .ToListAsync();
+
+            labourNames = labourNames.Distinct(StringComparer.CurrentCultureIgnoreCase).ToList();
+
+            return labourNames;
+        }
     }
 }

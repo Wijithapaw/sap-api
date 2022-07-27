@@ -219,6 +219,33 @@ namespace SAP.Tests
             }
         }
 
+        public class GetLabourNamesSuggestions
+        {
+            [Theory]
+            [InlineData("ja", 1)]
+            [InlineData("jA", 1)]
+            [InlineData("", 5)]
+            [InlineData("supun", 1)]
+            [InlineData("supunx", 0)]
+            public async Task WhenPassingSearchTerm_ReturnsMatchingLabourNames(string prefix, int count)
+            {
+                await DbHelper.ExecuteTestAsync(
+                  async (IDbContext dbContext) =>
+                  {
+                      await SetupTestDataAsync(dbContext);
+                  },
+                  async (IDbContext dbContext) =>
+                  {
+                      var service = CreateService(dbContext);
+
+                      var labourNames = await service.GetLabourNamesSuggestionsAsync(prefix);
+
+                      Assert.Equal(count, labourNames.Count);
+                      Assert.All(labourNames, l => l.ToLower().StartsWith(prefix.ToLower()));                      
+                  });
+            }
+        }
+
         private static async Task SetupTestDataAsync(IDbContext dbContext)
         {
             dbContext.Users.AddRange(TestData.Users.GetUsers());
